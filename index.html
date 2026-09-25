@@ -2771,7 +2771,14 @@
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setTimeout(() => {
-              window.print();
+              if (
+    window.Android &&
+    typeof window.Android.printPage === "function"
+) {
+    window.Android.printPage();
+} else {
+    window.print();
+}
               printReport.style.display = '';
             }, 120);
           });
