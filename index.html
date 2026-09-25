@@ -2771,63 +2771,7 @@
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setTimeout(() => {
-              if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    window.print();
-}
-}
-}
-}
-}
-}
-}
-}
+              window.print();
               printReport.style.display = '';
             }, 120);
           });
@@ -2954,14 +2898,7 @@
 
       printReport.classList.remove('all-records-print');
       printReport.innerHTML = markup;
-      if (
-    window.Android &&
-    typeof window.Android.printPage === "function"
-) {
-    window.Android.printPage();
-} else {
-    
-}
+      window.print();
     }
 
     function buildAllRecordsPrintMarkup(items) {
