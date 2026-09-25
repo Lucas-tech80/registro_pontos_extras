@@ -2813,7 +2813,14 @@
 ) {
     window.Android.printPage();
 } else {
+    if (
+    window.Android &&
+    typeof window.Android.printPage === "function"
+) {
+    window.Android.printPage();
+} else {
     window.print();
+}
 }
 }
 }
@@ -2947,7 +2954,14 @@
 
       printReport.classList.remove('all-records-print');
       printReport.innerHTML = markup;
-      window.print();
+      if (
+    window.Android &&
+    typeof window.Android.printPage === "function"
+) {
+    window.Android.printPage();
+} else {
+    
+}
     }
 
     function buildAllRecordsPrintMarkup(items) {
