@@ -2801,7 +2801,14 @@
 ) {
     window.Android.printPage();
 } else {
+    if (
+    window.Android &&
+    typeof window.Android.printPage === "function"
+) {
+    window.Android.printPage();
+} else {
     window.print();
+}
 }
 }
 }
