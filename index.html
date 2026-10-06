@@ -1,0 +1,5040 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manual Interativo de Políticas</title>
+<style>
+:root{
+  --blue:#087fe8;
+  --blue-dark:#0c3976;
+  --blue-soft:#eaf6ff;
+  --blue-pale:#dff1ff;
+  --bg:#f7fbff;
+  --white:#fff;
+  --text:#344d69;
+  --muted:#6e8196;
+  --line:#dbe8f4;
+  --shadow:0 10px 30px rgba(31,78,121,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit}
+.shell{width:min(1540px,97%);margin:auto}
+.home-view{min-height:100vh;padding:60px 0}
+.hero{text-align:center;margin:0 auto 42px;max-width:760px}
+.hero-badge{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:999px;
+  background:var(--blue-soft);
+  color:var(--blue);
+  font-size:.78rem;
+  font-weight:800;
+  margin-bottom:14px;
+}
+.hero h1{
+  margin:0;
+  color:var(--blue-dark);
+  font-size:clamp(2rem,4vw,3.55rem);
+  line-height:1.04;
+  letter-spacing:-.045em;
+}
+.hero p{margin:14px 0 0;color:var(--muted);font-size:1rem}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:38px;
+  margin-top:34px;
+}
+.card{
+  position:relative;
+  min-height:300px;
+  padding:40px;
+  overflow:hidden;
+  border:1px solid #bcdcf3;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 3px 10px rgba(20,63,104,.05);
+  cursor:pointer;
+  text-align:left;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.card:hover{
+  transform:translateY(-5px);
+  border-color:#74bdf0;
+  box-shadow:0 18px 38px rgba(20,63,104,.11);
+}
+.card-number{
+  position:absolute;
+  top:-19px;
+  right:9px;
+  color:var(--blue-pale);
+  font-size:7.8rem;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:-.08em;
+  user-select:none;
+}
+.card-title{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  z-index:1;
+}
+.icon{
+  width:56px;height:56px;
+  display:grid;place-items:center;
+  border-radius:13px;
+  background:#e5f4ff;
+  color:var(--blue);
+  flex:none;
+}
+.icon svg{width:28px;height:28px;stroke:currentColor}
+.card h2{
+  margin:0;
+  color:#0b1730;
+  font-size:1.55rem;
+  letter-spacing:-.025em;
+}
+.card p{
+  position:relative;
+  z-index:1;
+  margin:27px 0 0;
+  max-width:280px;
+  color:#49617c;
+  font-size:1.03rem;
+  line-height:1.6;
+}
+.card-link{
+  position:absolute;
+  left:40px;
+  bottom:34px;
+  color:var(--blue);
+  font-size:.82rem;
+  font-weight:850;
+}
+
+.doc-view{display:none;min-height:100vh;padding:28px 0 70px}
+.doc-view.active{display:block}
+.doc-top{
+  position:sticky;
+  top:0;
+  z-index:20;
+  padding:12px 0 16px;
+  background:linear-gradient(180deg,var(--bg) 78%,rgba(247,251,255,0));
+}
+.back{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  color:var(--blue-dark);
+  padding:0 14px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(20,63,104,.05);
+}
+.document{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.doc-head{
+  padding:34px 38px;
+  background:linear-gradient(135deg,#fff 0%,#f4faff 100%);
+  border-bottom:1px solid var(--line);
+}
+.doc-index{
+  display:inline-flex;
+  width:38px;height:38px;
+  align-items:center;justify-content:center;
+  border-radius:11px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:900;
+  margin-bottom:16px;
+}
+.doc-head h1{
+  margin:0;
+  color:var(--blue-dark);
+  font-size:clamp(2rem,3vw,3rem);
+  letter-spacing:-.035em;
+}
+.doc-head p{margin:10px 0 0;color:var(--muted);font-size:1rem}
+.doc-content{padding:38px 44px 58px;max-width:none}
+.doc-content h2{
+  margin:36px 0 14px;
+  padding-top:8px;
+  color:var(--blue-dark);
+  font-size:1.42rem;
+  line-height:1.3;
+}
+.doc-content h2:first-child{margin-top:0}
+.doc-content h3{
+  margin:22px 0 9px;
+  color:#155ca5;
+  font-size:1.10rem;
+}
+.doc-content p{
+  margin:0 0 14px;
+  color:#425b75;
+  line-height:1.72;
+  font-size:1.08rem;
+}
+.content-list{
+  margin:8px 0 18px;
+  padding-left:23px;
+  color:#425b75;
+}
+.content-list li{margin:7px 0;line-height:1.65}
+.table-wrap{
+  width:100%;
+  overflow:auto;
+  margin:18px 0 25px;
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:13px 15px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:.9rem;line-height:1.5}
+th{background:#f0f8ff;color:var(--blue-dark);font-weight:850}
+tr:last-child td{border-bottom:0}
+
+@media(max-width:1100px){.shell{width:96%}}
+@media(max-width:900px){
+  .cards{grid-template-columns:1fr;gap:16px}
+  .card{min-height:240px}
+}
+@media(max-width:600px){
+  .home-view{padding:34px 0}
+  .hero{text-align:left;margin-bottom:24px}
+  .cards{margin-top:20px}
+  .card{padding:28px;min-height:220px}
+  .card-number{font-size:6.4rem}
+  .card-link{left:28px;bottom:25px}
+  .doc-head,.doc-content{padding-left:22px;padding-right:22px}
+}
+
+/* Índice numérico das Políticas Internas */
+.policy-jump{
+  position:sticky;
+  top:66px;
+  z-index:12;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin:-8px 0 30px;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 8px 22px rgba(20,63,104,.07);
+  backdrop-filter:blur(12px);
+}
+.policy-jump-label{
+  flex:none;
+}
+.policy-jump-label strong{
+  display:block;
+  color:var(--blue-dark);
+  font-size:.88rem;
+}
+.policy-jump-label span{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:.72rem;
+}
+.policy-number-grid{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.policy-number-btn{
+  min-width:38px;
+  height:38px;
+  padding:0 10px;
+  border:1px solid #cfe3f5;
+  border-radius:10px;
+  background:#f3f9ff;
+  color:var(--blue-dark);
+  font-weight:850;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.policy-number-btn:hover,
+.policy-number-btn.active{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+  transform:translateY(-1px);
+}
+.policy-anchor{
+  scroll-margin-top:150px;
+}
+@media(max-width:760px){
+  .policy-jump{
+    position:relative;
+    top:auto;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .policy-number-grid{
+    justify-content:flex-start;
+  }
+}
+
+
+.policy-number-btn.text-btn{
+  min-width:auto;
+  padding:0 12px;
+}
+@media(max-width:900px){
+  .policy-number-grid{
+    max-height:132px;
+    overflow:auto;
+  }
+}
+
+
+/* Índice refinado — Benefícios */
+.policy-jump-refined{
+  position:sticky;
+  top:66px;
+  z-index:12;
+  display:block;
+  margin:-8px 0 30px;
+  padding:18px 20px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 10px 28px rgba(20,63,104,.07);
+  backdrop-filter:blur(12px);
+}
+
+.policy-jump-title{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.policy-jump-title strong{
+  color:var(--blue-dark);
+  font-size:.92rem;
+}
+
+.policy-jump-title span{
+  color:var(--muted);
+  font-size:.76rem;
+}
+
+.jump-group{
+  display:grid;
+  grid-template-columns:145px minmax(0,1fr);
+  align-items:center;
+  gap:14px;
+  padding:11px 0;
+  border-top:1px solid #edf3f8;
+}
+
+.jump-group:first-of-type{
+  border-top:0;
+  padding-top:0;
+}
+
+.jump-group-label{
+  color:#7b8da2;
+  font-size:.72rem;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.policy-jump-refined .policy-number-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  justify-content:flex-start;
+}
+
+.policy-jump-refined .policy-number-btn{
+  min-width:38px;
+  height:38px;
+  padding:0 10px;
+  border-radius:10px;
+  border:1px solid #cfe3f5;
+  background:#f5faff;
+  color:var(--blue-dark);
+  box-shadow:none;
+}
+
+.policy-jump-refined .policy-number-btn:hover{
+  background:#eaf5ff;
+  border-color:#9ecdf0;
+  transform:translateY(-1px);
+}
+
+.policy-jump-refined .policy-number-btn.active{
+  color:#fff;
+  background:var(--blue);
+  border-color:var(--blue);
+  box-shadow:0 7px 16px rgba(8,127,232,.18);
+}
+
+.policy-jump-refined .text-btn{
+  min-width:auto;
+  padding:0 14px;
+}
+
+@media(max-width:900px){
+  .policy-jump-refined{
+    position:relative;
+    top:auto;
+  }
+  .policy-jump-title{
+    display:block;
+  }
+  .policy-jump-title span{
+    display:block;
+    margin-top:3px;
+  }
+  .jump-group{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .policy-jump-refined .policy-number-grid{
+    max-height:none;
+    overflow:visible;
+  }
+}
+
+
+/* Menu recolhível e escalável das políticas/seções */
+.policy-picker{
+  position:sticky;
+  top:66px;
+  z-index:15;
+  margin:-8px 0 30px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 8px 24px rgba(20,63,104,.07);
+  overflow:hidden;
+  backdrop-filter:blur(12px);
+}
+
+.policy-picker summary{
+  min-height:66px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 16px;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+}
+
+.policy-picker summary::-webkit-details-marker{display:none}
+
+.picker-summary-icon{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  background:#eaf6ff;
+  color:var(--blue);
+  font-size:1rem;
+  font-weight:900;
+}
+
+.picker-summary-copy{
+  min-width:0;
+  flex:1;
+}
+
+.picker-summary-copy strong{
+  display:block;
+  color:var(--blue-dark);
+  font-size:.92rem;
+}
+
+.picker-summary-copy small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:.74rem;
+}
+
+.picker-chevron{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  color:#7890a9;
+  font-size:1.2rem;
+  transition:transform .2s ease;
+}
+
+.policy-picker[open] .picker-chevron{
+  transform:rotate(180deg);
+}
+
+.picker-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  padding:12px;
+  border-top:1px solid #edf3f8;
+  background:#fbfdff;
+  max-height:52vh;
+  overflow:auto;
+}
+
+.picker-item{
+  width:100%;
+  min-height:52px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:11px;
+  border:1px solid #e0ebf5;
+  border-radius:12px;
+  background:#fff;
+  padding:8px 11px;
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.picker-item:hover{
+  border-color:#aed3f2;
+  background:#f4faff;
+  transform:translateY(-1px);
+}
+
+.picker-number{
+  min-width:34px;
+  height:34px;
+  padding:0 8px;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  background:#eaf6ff;
+  color:var(--blue-dark);
+  font-size:.75rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.picker-name{
+  color:#36516e;
+  font-size:.82rem;
+  font-weight:760;
+  line-height:1.3;
+}
+
+.picker-arrow{
+  color:#9bb0c5;
+  font-weight:900;
+}
+
+.policy-picker .picker-item.active{
+  border-color:var(--blue);
+  background:#eef7ff;
+}
+
+.policy-picker .picker-item.active .picker-number{
+  background:var(--blue);
+  color:#fff;
+}
+
+@media(max-width:850px){
+  .policy-picker{
+    position:relative;
+    top:auto;
+  }
+  .picker-list{
+    grid-template-columns:1fr;
+    max-height:58vh;
+  }
+}
+
+
+/* Modo de edição do Manual */
+.picker-manage-trigger{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  color:#7890a9;
+  background:#f6faff;
+  border:1px solid #dceaf6;
+  transition:.16s ease;
+}
+.picker-manage-trigger:hover{
+  color:var(--blue);
+  border-color:#b8d8f1;
+  background:#edf7ff;
+}
+.picker-manage-trigger svg{
+  width:16px;
+  height:16px;
+}
+.policy-picker.manage-mode .picker-manage-trigger{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+.picker-item{
+  position:relative;
+}
+.picker-actions{
+  display:none;
+  align-items:center;
+  gap:5px;
+  margin-left:2px;
+}
+.policy-picker.manage-mode .picker-actions{
+  display:flex;
+}
+.picker-action{
+  width:30px;
+  height:30px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  color:#71879e;
+  background:#fff;
+  border:1px solid #dbe8f3;
+  transition:.15s ease;
+}
+.picker-action svg{
+  width:14px;
+  height:14px;
+  pointer-events:none;
+}
+.picker-action.edit:hover{
+  color:var(--blue);
+  border-color:#add2f0;
+  background:#edf7ff;
+}
+.picker-action.delete:hover{
+  color:#c34250;
+  border-color:#efc9ce;
+  background:#fff4f5;
+}
+.picker-add-row{
+  display:none;
+  grid-column:1/-1;
+  margin-top:4px;
+}
+.policy-picker.manage-mode .picker-add-row{
+  display:block;
+}
+.picker-add{
+  width:100%;
+  min-height:46px;
+  border:1px dashed #9fc9ec;
+  border-radius:12px;
+  background:#f4faff;
+  color:var(--blue);
+  font-weight:850;
+  cursor:pointer;
+  transition:.16s ease;
+}
+.picker-add:hover{
+  background:#eaf6ff;
+  border-color:#72b5e8;
+}
+.manage-hint{
+  display:none;
+  grid-column:1/-1;
+  color:#8698aa;
+  font-size:.7rem;
+  padding:2px 2px 0;
+}
+.policy-picker.manage-mode .manage-hint{
+  display:block;
+}
+
+
+/* Editor funcional */
+.editor-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(14,35,60,.34);
+  backdrop-filter:blur(5px);
+}
+.editor-modal-overlay.open{display:flex}
+.editor-modal{
+  width:min(650px,100%);
+  max-height:90vh;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 28px 70px rgba(12,57,118,.18);
+  padding:22px;
+}
+.editor-modal-head{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  margin-bottom:18px;
+}
+.editor-kicker{
+  display:block;
+  color:var(--blue);
+  font-size:.7rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.editor-modal h3{
+  margin:4px 0 0;
+  color:var(--blue-dark);
+  font-size:1.2rem;
+}
+.editor-close{
+  width:38px;height:38px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+  color:#667f98;
+  font-size:1.25rem;
+  cursor:pointer;
+}
+#editorForm{display:grid;gap:14px}
+.editor-field span{
+  display:block;
+  margin-bottom:6px;
+  color:#526b84;
+  font-size:.76rem;
+  font-weight:850;
+}
+.editor-field input,
+.editor-field textarea{
+  width:100%;
+  border:1px solid #d8e6f2;
+  border-radius:12px;
+  background:#fbfdff;
+  color:#29445f;
+  padding:11px 12px;
+  outline:none;
+  font:inherit;
+  font-size:.92rem;
+}
+.editor-field input:focus,
+.editor-field textarea:focus{
+  border-color:#8fc4ed;
+  box-shadow:0 0 0 3px rgba(8,127,232,.08);
+}
+.editor-field textarea{resize:vertical;min-height:160px}
+.editor-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:2px;
+}
+.editor-btn{
+  min-height:42px;
+  padding:0 15px;
+  border-radius:11px;
+  font-weight:850;
+  cursor:pointer;
+}
+.editor-btn.secondary{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--blue-dark);
+}
+.editor-btn.primary{
+  border:1px solid var(--blue);
+  background:var(--blue);
+  color:#fff;
+}
+.editor-message{
+  min-height:0;
+  color:#b54d59;
+  font-size:.78rem;
+}
+.user-created-section{
+  border-top:1px solid #edf3f8;
+  margin-top:30px;
+  padding-top:8px;
+}
+.user-created-section .user-content p{
+  white-space:pre-wrap;
+}
+.picker-item .picker-actions{
+  grid-column:auto;
+}
+.policy-picker.manage-mode .picker-item{
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+}
+@media(max-width:650px){
+  .editor-modal-overlay{padding:10px}
+  .editor-modal{padding:16px}
+  .editor-actions{display:grid;grid-template-columns:1fr 1fr}
+}
+
+
+/* Conteúdo aberto dentro do seletor */
+.policy-source-hidden{
+  display:none !important;
+}
+
+.picker-selected-view{
+  display:none;
+  border-top:1px solid #edf3f8;
+  background:#fff;
+}
+
+.picker-selected-top{
+  position:sticky;
+  top:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 16px;
+  border-bottom:1px solid #e7eff7;
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(10px);
+}
+
+.picker-back-list{
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid #d4e5f3;
+  border-radius:10px;
+  background:#f8fbff;
+  color:var(--blue-dark);
+  padding:0 12px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.picker-back-list:hover{
+  background:#edf7ff;
+  border-color:#aed2ef;
+}
+
+.picker-selected-title{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-align:right;
+}
+
+.picker-selected-number{
+  min-width:36px;
+  height:36px;
+  padding:0 8px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:var(--blue);
+  color:#fff;
+  font-size:.76rem;
+  font-weight:900;
+}
+
+.picker-selected-title strong{
+  display:block;
+  color:var(--blue-dark);
+  font-size:.9rem;
+}
+
+.picker-selected-title small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:.7rem;
+}
+
+.picker-selected-content{
+  padding:24px 28px 34px;
+  max-height:68vh;
+  overflow:auto;
+}
+
+.picker-selected-content h2{
+  margin:30px 0 13px;
+  color:var(--blue-dark);
+  font-size:1.35rem;
+  line-height:1.3;
+}
+
+.picker-selected-content h2:first-child{
+  margin-top:0;
+}
+
+.picker-selected-content h3{
+  margin:20px 0 8px;
+  color:#155ca5;
+  font-size:1.02rem;
+}
+
+.picker-selected-content p{
+  margin:0 0 13px;
+  color:#425b75;
+  font-size:1.02rem;
+  line-height:1.72;
+}
+
+.picker-selected-content ul,
+.picker-selected-content ol{
+  color:#425b75;
+  font-size:1.02rem;
+  line-height:1.68;
+}
+
+.picker-selected-content .table-wrap{
+  margin:17px 0 22px;
+}
+
+@media(max-width:760px){
+  .picker-selected-top{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .picker-selected-title{
+    text-align:left;
+  }
+  .picker-selected-content{
+    padding:20px 16px 28px;
+    max-height:none;
+  }
+}
+
+
+/* Confirmação de exclusão */
+.delete-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10020;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(13,35,61,.36);
+  backdrop-filter:blur(5px);
+}
+.delete-modal-overlay.open{display:flex}
+
+.delete-modal{
+  width:min(440px,100%);
+  padding:24px;
+  border:1px solid #e1eaf3;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 28px 70px rgba(13,35,61,.18);
+  text-align:center;
+}
+
+.delete-icon{
+  width:50px;
+  height:50px;
+  margin:0 auto 14px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  background:#fff0f1;
+  color:#c44552;
+}
+.delete-icon svg{width:22px;height:22px}
+
+.delete-modal h3{
+  margin:0;
+  color:#173a67;
+  font-size:1.12rem;
+}
+.delete-modal p{
+  margin:9px 0;
+  color:#70839a;
+  font-size:.82rem;
+}
+.delete-policy-name{
+  display:block;
+  margin:12px 0;
+  padding:11px 12px;
+  border:1px solid #e4edf5;
+  border-radius:11px;
+  background:#f8fbff;
+  color:#274866;
+  font-size:.88rem;
+}
+.delete-warning{font-size:.75rem!important}
+
+.delete-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:18px;
+}
+.delete-btn{
+  min-height:44px;
+  border-radius:11px;
+  font-weight:850;
+  cursor:pointer;
+}
+.delete-btn.cancel{
+  border:1px solid #d8e5f0;
+  background:#fff;
+  color:#173a67;
+}
+.delete-btn.confirm{
+  border:1px solid #c44552;
+  background:#c44552;
+  color:#fff;
+}
+.delete-btn.cancel:hover{background:#f5f9fd}
+.delete-btn.confirm:hover{background:#ad3945}
+
+.editor-toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  z-index:10030;
+  transform:translate(-50%,16px);
+  opacity:0;
+  pointer-events:none;
+  padding:10px 14px;
+  border-radius:11px;
+  background:#173a67;
+  color:#fff;
+  font-size:.78rem;
+  font-weight:800;
+  box-shadow:0 12px 30px rgba(18,58,103,.2);
+  transition:.2s ease;
+}
+.editor-toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+
+/* Paginação das políticas/seções: 5 itens por aba */
+.picker-pagination{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:10px 12px;
+  border-top:1px solid #edf3f8;
+  background:#f8fbff;
+}
+
+.picker-page-btn{
+  min-width:36px;
+  height:36px;
+  padding:0 10px;
+  border:1px solid #d6e6f3;
+  border-radius:10px;
+  background:#fff;
+  color:var(--blue-dark);
+  font-weight:850;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.picker-page-btn:hover{
+  border-color:#9fc9ec;
+  background:#edf7ff;
+}
+
+.picker-page-btn.active{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+
+.picker-page-info{
+  margin-left:auto;
+  color:#8295a9;
+  font-size:.72rem;
+  font-weight:750;
+}
+
+.picker-list.paged-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.picker-list.paged-list .picker-item.page-hidden{
+  display:none !important;
+}
+
+@media(max-width:760px){
+  .picker-list.paged-list{
+    grid-template-columns:1fr;
+  }
+  .picker-pagination{
+    flex-wrap:wrap;
+  }
+  .picker-page-info{
+    width:100%;
+    margin-left:0;
+    margin-top:2px;
+  }
+}
+
+
+/* Ajuste solicitado: paginação com o mesmo visual dos números das políticas */
+.picker-page-btn{
+  min-width:34px !important;
+  width:auto;
+  height:34px !important;
+  padding:0 9px !important;
+  border:0 !important;
+  border-radius:9px !important;
+  background:#eaf6ff !important;
+  color:var(--blue-dark) !important;
+  font-size:.75rem !important;
+  font-weight:900 !important;
+  box-shadow:none !important;
+  outline:none;
+}
+.picker-page-btn:hover{
+  background:#dff1ff !important;
+  color:var(--blue-dark) !important;
+  transform:none !important;
+}
+.picker-page-btn.active{
+  background:var(--blue) !important;
+  color:#fff !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.picker-page-btn:focus{
+  outline:none !important;
+  box-shadow:none !important;
+}
+.picker-page-btn:focus-visible{
+  outline:2px solid rgba(8,127,232,.22) !important;
+  outline-offset:2px;
+}
+
+
+/* Navegação entre grupos sem números */
+.picker-pagination{
+  display:grid !important;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:12px;
+  padding:11px 12px !important;
+  border-top:1px solid #edf3f8;
+  background:#f8fbff;
+}
+
+.picker-nav-btn{
+  min-height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:0 12px;
+  border:1px solid #d4e4f1;
+  border-radius:10px;
+  background:#fff;
+  color:var(--blue-dark);
+  font-size:.76rem;
+  font-weight:850;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.picker-nav-btn:hover:not(:disabled){
+  background:#edf7ff;
+  border-color:#a9cfee;
+}
+
+.picker-nav-btn:disabled{
+  opacity:.35;
+  cursor:default;
+}
+
+.picker-nav-btn.next{
+  color:var(--blue);
+}
+
+.picker-page-info{
+  margin:0 !important;
+  text-align:center;
+  color:#8295a9;
+  font-size:.71rem;
+  font-weight:750;
+}
+
+.picker-page-btn{
+  display:none !important;
+}
+
+@media(max-width:560px){
+  .picker-pagination{
+    grid-template-columns:1fr 1fr;
+  }
+  .picker-page-info{
+    grid-column:1/-1;
+    grid-row:1;
+    margin-bottom:2px !important;
+  }
+}
+
+
+.picker-nav-btn:disabled{
+  opacity:.38 !important;
+  pointer-events:none;
+  cursor:not-allowed !important;
+}
+
+
+/* Oculta a navegação entre grupos quando uma política está aberta */
+.policy-picker.policy-open .picker-pagination{
+  display:none !important;
+}
+
+
+/* Mantém a tela limpa: abaixo do seletor, nada aparece até uma política ser aberta */
+.doc-content > .policy-picker ~ *{
+  display:none !important;
+}
+
+/* O conteúdo aberto continua aparecendo dentro do próprio seletor */
+.policy-picker.policy-open .picker-selected-view{
+  display:block;
+}
+
+
+/* Botão de impressão da política aberta */
+.picker-selected-actions{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+}
+
+.picker-print-btn{
+  width:40px;
+  height:40px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border:1px solid #d4e5f3;
+  border-radius:11px;
+  background:#fff;
+  color:var(--blue);
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.picker-print-btn:hover{
+  background:#edf7ff;
+  border-color:#abd1ef;
+  transform:translateY(-1px);
+}
+
+.picker-print-btn svg{
+  width:18px;
+  height:18px;
+}
+
+@media(max-width:760px){
+  .picker-selected-actions{
+    width:100%;
+    justify-content:space-between;
+    margin-left:0;
+  }
+}
+
+@media print{
+  body *{
+    visibility:hidden !important;
+  }
+
+  .policy-picker.print-target,
+  .policy-picker.print-target .picker-selected-view,
+  .policy-picker.print-target .picker-selected-content,
+  .policy-picker.print-target .picker-selected-content *{
+    visibility:visible !important;
+  }
+
+  .policy-picker.print-target{
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    margin:0 !important;
+    border:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+    overflow:visible !important;
+  }
+
+  .policy-picker.print-target summary,
+  .policy-picker.print-target .picker-selected-top,
+  .policy-picker.print-target .picker-pagination,
+  .policy-picker.print-target .picker-list{
+    display:none !important;
+  }
+
+  .policy-picker.print-target .picker-selected-view{
+    display:block !important;
+    border:0 !important;
+    background:#fff !important;
+  }
+
+  .policy-picker.print-target .picker-selected-content{
+    max-height:none !important;
+    overflow:visible !important;
+    padding:0 !important;
+  }
+
+  .policy-picker.print-target .picker-selected-content h2,
+  .policy-picker.print-target .picker-selected-content h3{
+    color:#173a67 !important;
+  }
+
+  @page{
+    margin:16mm;
+  }
+}
+
+
+/* Interação da impressora */
+.print-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10040;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(13,35,61,.34);
+  backdrop-filter:blur(5px);
+}
+.print-modal-overlay.open{display:flex}
+
+.print-modal{
+  position:relative;
+  width:min(460px,100%);
+  padding:26px;
+  border:1px solid #dce8f3;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 28px 70px rgba(13,35,61,.18);
+  text-align:center;
+}
+
+.print-modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:36px;
+  height:36px;
+  border:1px solid #d8e6f2;
+  border-radius:10px;
+  background:#fff;
+  color:#6f849a;
+  font-size:1.15rem;
+  cursor:pointer;
+}
+
+.print-modal-icon{
+  width:54px;
+  height:54px;
+  margin:0 auto 14px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  background:#eaf6ff;
+  color:var(--blue);
+}
+.print-modal-icon svg{width:23px;height:23px}
+
+.print-modal-kicker{
+  display:block;
+  color:var(--blue);
+  font-size:.68rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  margin-bottom:5px;
+}
+
+.print-modal h3{
+  margin:0;
+  color:var(--blue-dark);
+  font-size:1.22rem;
+}
+
+.print-modal p{
+  margin:9px auto 0;
+  max-width:350px;
+  color:#71849a;
+  font-size:.82rem;
+  line-height:1.55;
+}
+
+.print-policy-preview{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin:20px 0;
+  padding:12px;
+  border:1px solid #dce8f3;
+  border-radius:13px;
+  background:#f8fbff;
+  text-align:left;
+}
+
+.print-policy-number{
+  min-width:36px;
+  height:36px;
+  padding:0 8px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#e5f4ff;
+  color:var(--blue-dark);
+  font-size:.76rem;
+  font-weight:900;
+}
+
+.print-policy-preview strong{
+  color:#274866;
+  font-size:.86rem;
+}
+
+.print-modal-actions{
+  display:grid;
+  grid-template-columns:1fr 1.2fr;
+  gap:9px;
+}
+
+.print-action{
+  min-height:44px;
+  border-radius:11px;
+  font-weight:850;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+
+.print-action svg{width:16px;height:16px}
+
+.print-action.secondary{
+  border:1px solid #d8e5f0;
+  background:#fff;
+  color:var(--blue-dark);
+}
+
+.print-action.primary{
+  border:1px solid var(--blue);
+  background:var(--blue);
+  color:#fff;
+}
+
+.print-action.secondary:hover{background:#f5f9fd}
+.print-action.primary:hover{filter:brightness(.97)}
+
+@media(max-width:520px){
+  .print-modal{padding:22px 16px 16px}
+  .print-modal-actions{grid-template-columns:1fr}
+}
+
+
+/* Impressão nativa: somente a política selecionada */
+.native-print-area{
+  display:none;
+}
+
+@media print{
+  html.printing-selected-policy body > *{
+    display:none !important;
+  }
+
+  html.printing-selected-policy body > #nativePrintArea{
+    display:block !important;
+  }
+
+  #nativePrintArea{
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#fff !important;
+    color:#243b55 !important;
+    font-family:Arial,Helvetica,sans-serif !important;
+  }
+
+  .native-print-header{
+    display:flex !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 0 22px !important;
+    padding:0 0 16px !important;
+    border-bottom:1px solid #d8e3ed !important;
+  }
+
+  .native-print-number{
+    min-width:38px !important;
+    height:38px !important;
+    padding:0 8px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:8px !important;
+    background:#eaf6ff !important;
+    color:#0c3976 !important;
+    font-weight:700 !important;
+  }
+
+  .native-print-title h1{
+    margin:0 !important;
+    color:#0c3976 !important;
+    font-size:21pt !important;
+    line-height:1.15 !important;
+  }
+
+  .native-print-title p{
+    margin:4px 0 0 !important;
+    color:#667d94 !important;
+    font-size:9pt !important;
+  }
+
+  .native-print-content{
+    display:block !important;
+  }
+
+  .native-print-content h2,
+  .native-print-content h3{
+    color:#0c3976 !important;
+    break-after:avoid-page !important;
+  }
+
+  .native-print-content h2{
+    margin:20px 0 10px !important;
+    font-size:14pt !important;
+  }
+
+  .native-print-content h3{
+    margin:15px 0 7px !important;
+    font-size:11pt !important;
+  }
+
+  .native-print-content p,
+  .native-print-content li{
+    color:#344d69 !important;
+    font-size:10pt !important;
+    line-height:1.5 !important;
+  }
+
+  .native-print-content table{
+    width:100% !important;
+    border-collapse:collapse !important;
+    break-inside:auto !important;
+  }
+
+  .native-print-content tr{
+    break-inside:avoid !important;
+  }
+
+  .native-print-content th,
+  .native-print-content td{
+    border:1px solid #d8e3ed !important;
+    padding:7px 9px !important;
+    font-size:9pt !important;
+  }
+
+  @page{
+    size:auto;
+    margin:14mm;
+  }
+}
+
+
+/* Impressão múltipla */
+.multi-print-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10050;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(13,35,61,.36);
+  backdrop-filter:blur(5px);
+}
+.multi-print-overlay.open{display:none!important}
+
+.multi-print-modal{
+  width:min(680px,100%);
+  max-height:88vh;
+  display:flex;
+  flex-direction:column;
+  border:1px solid #dce8f3;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 28px 70px rgba(13,35,61,.18);
+  overflow:hidden;
+}
+
+.multi-print-head{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  padding:20px 20px 14px;
+}
+.multi-print-kicker{
+  display:block;
+  color:var(--blue);
+  font-size:.68rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+}
+.multi-print-head h3{
+  margin:4px 0 0;
+  color:var(--blue-dark);
+  font-size:1.18rem;
+}
+.multi-print-head p{
+  margin:5px 0 0;
+  color:#71849a;
+  font-size:.8rem;
+}
+.multi-print-close{
+  width:36px;height:36px;flex:none;
+  border:1px solid #d8e6f2;border-radius:10px;
+  background:#fff;color:#6f849a;font-size:1.15rem;cursor:pointer;
+}
+
+.multi-print-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 20px;
+  border-top:1px solid #edf3f8;
+  border-bottom:1px solid #edf3f8;
+  background:#f8fbff;
+}
+.multi-print-select-all{
+  min-height:34px;
+  border:1px solid #cfe3f5;
+  border-radius:9px;
+  background:#fff;
+  color:var(--blue);
+  padding:0 11px;
+  font-size:.75rem;
+  font-weight:850;
+  cursor:pointer;
+}
+.multi-print-toolbar span{
+  color:#7c90a5;
+  font-size:.75rem;
+  font-weight:800;
+}
+
+.multi-print-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  padding:14px 20px;
+  overflow:auto;
+}
+
+.multi-print-item{
+  position:relative;
+  min-height:50px;
+  display:grid;
+  grid-template-columns:22px 36px minmax(0,1fr);
+  align-items:center;
+  gap:9px;
+  border:1px solid #dfeaf4;
+  border-radius:12px;
+  background:#fff;
+  padding:8px 10px;
+  cursor:pointer;
+}
+.multi-print-item:hover{
+  background:#f6fbff;
+  border-color:#b9d8f0;
+}
+.multi-print-item input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.multi-print-check{
+  width:20px;height:20px;
+  border:1.5px solid #b8ccde;
+  border-radius:6px;
+  background:#fff;
+  position:relative;
+}
+.multi-print-item input:checked + .multi-print-check{
+  background:var(--blue);
+  border-color:var(--blue);
+}
+.multi-print-item input:checked + .multi-print-check::after{
+  content:"";
+  position:absolute;
+  left:6px;top:2px;
+  width:5px;height:10px;
+  border:solid #fff;
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+.multi-print-number{
+  min-width:34px;height:34px;padding:0 7px;
+  display:grid;place-items:center;
+  border-radius:9px;background:#eaf6ff;
+  color:var(--blue-dark);font-size:.72rem;font-weight:900;
+}
+.multi-print-name{
+  min-width:0;
+  color:#36516e;
+  font-size:.78rem;
+  font-weight:800;
+  line-height:1.3;
+}
+
+.multi-print-actions{
+  display:grid;
+  grid-template-columns:1fr 1.25fr;
+  gap:9px;
+  padding:14px 20px 20px;
+  border-top:1px solid #edf3f8;
+}
+.multi-print-btn{
+  min-height:44px;
+  border-radius:11px;
+  font-weight:850;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.multi-print-btn svg{width:16px;height:16px}
+.multi-print-btn.secondary{
+  border:1px solid #d8e5f0;
+  background:#fff;
+  color:var(--blue-dark);
+}
+.multi-print-btn.primary{
+  border:1px solid var(--blue);
+  background:var(--blue);
+  color:#fff;
+}
+.multi-print-btn.primary:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+@media(max-width:680px){
+  .multi-print-list{grid-template-columns:1fr}
+  .multi-print-actions{grid-template-columns:1fr}
+}
+
+
+/* Alinhamento exclusivo do card 3 */
+.card-prize h2{
+  font-size:clamp(1.15rem,1.4vw,1.32rem);
+  line-height:1.28;
+  letter-spacing:-.025em;
+  transform:translateY(9px);
+  max-width:100%;
+}
+
+.card-prize .card-title{
+  align-items:center;
+}
+
+
+/* =========================================================
+   AUTENTICAÇÃO E PERFIS
+   viewer = somente leitura
+   admin  = leitura + edição + exclusão + impressão
+   ========================================================= */
+
+.auth-shell{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:32px 18px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(8,127,232,.10),transparent 32rem),
+    #f7fbff;
+}
+.auth-card{
+  width:min(430px,100%);
+  padding:34px;
+  border:1px solid #dbe8f4;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 24px 65px rgba(20,63,104,.10);
+}
+.auth-mark{
+  width:48px;height:48px;
+  display:grid;place-items:center;
+  border-radius:14px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:900;
+  margin-bottom:20px;
+}
+.auth-kicker{
+  display:block;
+  color:var(--blue);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:.68rem;
+  font-weight:900;
+}
+.auth-card h1{
+  margin:6px 0 8px;
+  color:var(--blue-dark);
+  font-size:2rem;
+  letter-spacing:-.04em;
+}
+.auth-card > p{
+  margin:0 0 22px;
+  color:var(--muted);
+  font-size:.88rem;
+}
+.auth-form{
+  display:grid;
+  gap:14px;
+}
+.auth-form label span{
+  display:block;
+  margin-bottom:6px;
+  color:#536d87;
+  font-size:.74rem;
+  font-weight:850;
+}
+.auth-form input{
+  width:100%;
+  min-height:46px;
+  border:1px solid #d8e6f2;
+  border-radius:12px;
+  background:#fbfdff;
+  padding:0 13px;
+  color:#29445f;
+  font:inherit;
+  font-size:1rem;
+  outline:none;
+}
+.auth-form input:focus{
+  border-color:#8fc4ed;
+  box-shadow:0 0 0 3px rgba(8,127,232,.08);
+}
+.auth-submit{
+  min-height:46px;
+  margin-top:2px;
+  border:1px solid var(--blue);
+  border-radius:12px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.auth-submit:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+.auth-message{
+  min-height:18px;
+  color:#b34450;
+  font-size:.76rem;
+}
+.auth-config-note{
+  display:none;
+  margin-top:16px;
+  padding:10px 12px;
+  border:1px solid #f0d9a9;
+  border-radius:10px;
+  background:#fff9eb;
+  color:#856626;
+  font-size:.75rem;
+}
+.auth-config-note.show{display:block}
+
+body.auth-locked > :not(.auth-shell):not(script):not(style){
+  display:none !important;
+}
+body:not(.auth-locked) .auth-shell{
+  display:none !important;
+}
+
+.session-bar{
+  position:fixed;
+  z-index:9000;
+  right:18px;
+  top:16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 8px 7px 10px;
+  border:1px solid #dbe8f4;
+  border-radius:13px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 8px 25px rgba(20,63,104,.08);
+  backdrop-filter:blur(10px);
+}
+.session-user{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.session-dot{
+  width:8px;height:8px;
+  flex:none;
+  border-radius:50%;
+  background:#27a46b;
+}
+.session-user strong{
+  display:block;
+  color:var(--blue-dark);
+  font-size:.72rem;
+}
+.session-user small{
+  display:block;
+  max-width:230px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#7b8fa4;
+  font-size:.66rem;
+}
+.session-bar button{
+  min-height:32px;
+  padding:0 10px;
+  border:1px solid #d7e5f1;
+  border-radius:9px;
+  background:#f8fbff;
+  color:var(--blue-dark);
+  font-size:.7rem;
+  font-weight:850;
+  cursor:pointer;
+}
+
+/* Colaborador: somente leitura */
+body[data-role="viewer"] .picker-manage-trigger,
+body[data-role="viewer"] .picker-actions,
+body[data-role="viewer"] .picker-print-btn,
+body[data-role="viewer"] .picker-add-row,
+body[data-role="viewer"] .editor-modal-overlay,
+body[data-role="viewer"] .delete-modal-overlay,
+body[data-role="viewer"] .multi-print-overlay{
+  display:none !important;
+}
+
+/* Admin: não exibe inclusão nesta versão; apenas editar, excluir e imprimir. */
+body[data-role="admin"] .picker-add-row{
+  display:none !important;
+}
+
+/* Não deixa o colaborador imprimir pelo fluxo normal do manual. */
+@media print{
+  body[data-role="viewer"] > *{
+    display:none !important;
+  }
+  body[data-role="viewer"]::before{
+    content:"Impressão disponível somente para o administrador.";
+    display:block !important;
+    padding:24px;
+    color:#173a67;
+    font:700 16px Arial,sans-serif;
+  }
+}
+
+@media(max-width:600px){
+  .auth-card{padding:24px 18px}
+  .session-bar{
+    left:10px;
+    right:10px;
+    top:10px;
+    justify-content:space-between;
+  }
+}
+
+
+/* =========================================================
+   ACESSO PÚBLICO + MODO ADMINISTRADOR POR MAGIC LINK
+   Público: somente leitura, sem login.
+   Admin: editar, excluir e imprimir após validação Supabase.
+   ========================================================= */
+
+.admin-access-overlay{
+  position:fixed;
+  inset:0;
+  z-index:12000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(17,42,66,.40);
+  backdrop-filter:blur(6px);
+}
+.admin-access-overlay.open{
+  display:flex;
+}
+.admin-access-card{
+  position:relative;
+  width:min(430px,100%);
+  padding:32px;
+  border:1px solid #dbe8f4;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 28px 80px rgba(20,63,104,.20);
+}
+.admin-access-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:34px;
+  height:34px;
+  border:1px solid #dce7f2;
+  border-radius:10px;
+  background:#f8fbff;
+  color:#607a93;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+.admin-access-card h1{
+  margin:6px 0 8px;
+  color:var(--blue-dark);
+  font-size:1.75rem;
+  letter-spacing:-.035em;
+}
+.admin-access-card > p{
+  margin:0 0 20px;
+  color:var(--muted);
+  font-size:.86rem;
+  line-height:1.55;
+}
+.admin-access-form{
+  display:grid;
+  gap:14px;
+}
+.admin-access-form label span{
+  display:block;
+  margin-bottom:6px;
+  color:#536d87;
+  font-size:.74rem;
+  font-weight:850;
+}
+.admin-access-form input{
+  width:100%;
+  min-height:46px;
+  border:1px solid #d8e6f2;
+  border-radius:12px;
+  background:#fbfdff;
+  padding:0 13px;
+  color:#29445f;
+  font:inherit;
+  font-size:1rem;
+  outline:none;
+}
+.admin-access-form input:focus{
+  border-color:#8fc4ed;
+  box-shadow:0 0 0 3px rgba(8,127,232,.08);
+}
+
+/* Público é sempre leitura. */
+body[data-role="viewer"] .picker-manage-trigger,
+body[data-role="viewer"] .picker-actions,
+body[data-role="viewer"] .picker-print-btn,
+body[data-role="viewer"] .picker-add-row,
+body[data-role="viewer"] .editor-modal-overlay,
+body[data-role="viewer"] .delete-modal-overlay,
+body[data-role="viewer"] .multi-print-overlay{
+  display:none !important;
+}
+
+/* Admin continua sem inclusão: apenas editar, excluir e imprimir. */
+body[data-role="admin"] .picker-add-row{
+  display:none !important;
+}
+
+@media(max-width:600px){
+  .admin-access-card{padding:26px 18px}
+}
+
+</style>
+</head>
+<body data-role="viewer">
+
+
+
+<div class="admin-access-overlay" id="adminAccessOverlay" aria-hidden="true">
+  <div class="admin-access-card" role="dialog" aria-modal="true" aria-labelledby="adminAccessTitle">
+    <button type="button" class="admin-access-close" id="adminAccessClose" aria-label="Fechar">×</button>
+    <div class="auth-mark">MH</div>
+    <span class="auth-kicker">Acesso administrativo</span>
+    <h1 id="adminAccessTitle">Gerenciar políticas</h1>
+    <p>Informe o e-mail da pessoa autorizada. O Supabase enviará um link de acesso temporário.</p>
+
+    <form class="admin-access-form" id="adminAccessForm">
+      <label>
+        <span>E-mail autorizado</span>
+        <input id="adminAccessEmail" type="email" autocomplete="email" placeholder="nome@empresa.com.br" required>
+      </label>
+
+      <div class="auth-message" id="adminAccessMessage" aria-live="polite"></div>
+
+      <button type="submit" class="auth-submit" id="adminAccessSubmit">
+        Enviar link de acesso
+      </button>
+    </form>
+
+    <div class="auth-config-note" id="adminConfigNote">
+      Configure a URL e a chave pública do Supabase neste arquivo antes de publicar.
+    </div>
+  </div>
+</div>
+
+<div class="session-bar" id="sessionBar" hidden>
+  <div class="session-user">
+    <span class="session-dot"></span>
+    <div>
+      <strong>Modo administrador</strong>
+      <small id="sessionEmail"></small>
+    </div>
+  </div>
+  <button type="button" id="logoutBtn">Sair do modo admin</button>
+</div>
+
+  <button type="button" id="logoutBtn">Sair</button>
+</div>
+
+<section id="home" class="home-view">
+  <div class="shell">
+    <div class="hero">
+      <span class="hero-badge">Manual Interativo</span>
+      <h1>Políticas Corporativas</h1>
+      <p>Escolha um conteúdo para consultar.</p>
+    </div>
+
+    <div class="cards">
+      <article class="card" onclick="openDoc('politicas')" tabindex="0" onkeydown="if(event.key==='Enter')openDoc('politicas')">
+        <span class="card-number">1</span>
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
+            </svg>
+          </span>
+          <h2>Políticas Internas</h2>
+        </div>
+        <p>Ética, segurança, tecnologia, dados, compras, comunicação, qualidade e demais políticas internas.</p>
+        <span class="card-link">Acessar conteúdo →</span>
+      </article>
+
+      <article class="card" onclick="openDoc('dayoff')" tabindex="0" onkeydown="if(event.key==='Enter')openDoc('dayoff')">
+        <span class="card-number">2</span>
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="16" rx="2"/>
+              <path d="M16 3v4M8 3v4M3 11h18"/>
+              <path d="M9 16l2 2 4-4"/>
+            </svg>
+          </span>
+          <h2>Day Off</h2>
+        </div>
+        <p>Regras do benefício para aniversário, casamento, união estável, solicitação e registro.</p>
+        <span class="card-link">Acessar conteúdo →</span>
+      </article>
+
+      <article class="card card-prize" onclick="openDoc('beneficios')" tabindex="0" onkeydown="if(event.key==='Enter')openDoc('beneficios')">
+        <span class="card-number">3</span>
+        <div class="card-title">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 16l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 2Z"/>
+            </svg>
+          </span>
+          <h2>Prêmio por Desempenho Extraordinário</h2>
+        </div>
+        <p>Prêmio por Desempenho Extraordinário: critérios, apuração, aprovação, registro e anexos.</p>
+        <span class="card-link">Acessar conteúdo →</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="view-politicas" class="doc-view">
+  <div class="shell">
+    <div class="doc-top"><button class="back" onclick="goHome()">← Voltar</button></div>
+    <article class="document">
+      <header class="doc-head">
+        <span class="doc-index">1</span>
+        <h1>Políticas Internas</h1>
+        <p>Caderno de Políticas Internas — Mais Hidro Soluções</p>
+      </header>
+      <div class="doc-content">
+
+<details class="policy-picker">
+  <summary>
+    <span class="picker-summary-icon">☰</span>
+    <span class="picker-summary-copy">
+      <strong>Selecionar política</strong>
+      <small>Clique para ver todas as políticas</small>
+    </span>
+    <span class="picker-manage-trigger" title="Modo de edição" onclick="toggleManage(event,this)" aria-label="Ativar modo de edição">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+      </svg>
+    </span>
+    <span class="picker-chevron">⌄</span>
+  </summary>
+  <div class="picker-list">
+    <button type="button" class="picker-item" onclick="goPolicy('politica-1',this)">
+              <span class="picker-number">1</span>
+              <span class="picker-name">Ética e Conduta</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-2',this)">
+              <span class="picker-number">2</span>
+              <span class="picker-name">Segurança do Trabalho</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-3',this)">
+              <span class="picker-number">3</span>
+              <span class="picker-name">Tecnologia da Informação e Segurança Digital</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-4',this)">
+              <span class="picker-number">4</span>
+              <span class="picker-name">Proteção de Dados (LGPD)</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-5',this)">
+              <span class="picker-number">5</span>
+              <span class="picker-name">Compras</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-6',this)">
+              <span class="picker-number">6</span>
+              <span class="picker-name">Viagens e Reembolsos</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-7',this)">
+              <span class="picker-number">7</span>
+              <span class="picker-name">Gestão Documental</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-8',this)">
+              <span class="picker-number">8</span>
+              <span class="picker-name">Comunicação e Marca</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-8-1',this)">
+              <span class="picker-number">8.1</span>
+              <span class="picker-name">Comunicação Interna</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-9',this)">
+              <span class="picker-number">9</span>
+              <span class="picker-name">Ativos e Patrimônio</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-10',this)">
+              <span class="picker-number">10</span>
+              <span class="picker-name">Home Office</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-11',this)">
+              <span class="picker-number">11</span>
+              <span class="picker-name">Qualidade</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('politica-12',this)">
+              <span class="picker-number">12</span>
+              <span class="picker-name">Gestão e Revisão das Políticas</span>
+              <span class="picker-arrow">→</span>
+            </button>
+  </div>
+</details>
+
+<p><strong>CADERNO DE POLÍTICAS INTERNAS — MAIS HIDRO SOLUÇÕES (v</strong><strong>0</strong><strong>.</strong><strong>0</strong><strong>)</strong></p>
+<p>Documento oficial da Mais Hidro Soluções que define princípios, regras e responsabilidades para todos os colaboradores, garantindo integridade, segurança e eficiência nas atividades diárias. O caderno reflete a cultura da empresa baseada em <strong>ética, transparência, segurança, aprendizado contínuo, padronização e uso inteligente de dados</strong>.</p>
+<h2 id="politica-1" class="policy-anchor">1. POLÍTICA DE ÉTICA E CONDUTA</h2>
+<h3>Objetivo</h3>
+<p>Assegurar que todos os colaboradores da Mais Hidro Soluções ajam com integridade, transparência e respeito, preservando a reputação da empresa e o ambiente de trabalho saudável.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Conflito de interesses:</strong> qualquer relação pessoal, familiar ou financeira que possa influenciar decisões deve ser declarada ao setor de Qualidade &amp; Compliance.</li>
+<li><strong>Canal de Ética:</strong> disponível para denúncias e sugestões. Pode ser usado de forma anônima e é confidencial.</li>
+<li><strong>Presentes e brindes:</strong> qualquer presente, brinde ou convite recebido de clientes, fornecedores ou parceiros deve ser <strong>comunicado à Diretoria</strong> antes de ser aceito. A Diretoria avaliará a adequação e decidirá se o item pode ser recebido ou deverá ser recusado. Nenhum presente deve ser aceito em períodos de negociação, licitação ou auditoria.</li>
+<li><strong>Assédio e discriminação:</strong> não são tolerados sob nenhuma forma. Casos serão investigados e punidos conforme gravidade.</li>
+<li><strong>Código de Conduta:</strong> deve ser lido e assinado anualmente por todos.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão e Monitoramento:</strong> Qualidade &amp; Compliance.</li>
+<li><strong>Suporte:</strong> RH e Jurídico.</li>
+</ul>
+<h3>Indicadores de Controle</h3>
+<ul class="content-list">
+<li>100% dos colaboradores com termo de aceite do código.</li>
+<li>Prazo máximo de 48h para resposta inicial a denúncias.</li>
+<li>Encerramento de apurações em até 30 dias.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> informar à Diretoria sobre qualquer presente, convite ou benefício recebido de fornecedor antes de aceitá-lo; agir com transparência em todas as negociações e manter postura ética e respeitosa com colegas e clientes.<br></li>
+<li><strong>Incorreto:</strong> praticar ou tolerar qualquer forma de assédio, discriminação, favoritismo ou comentários ofensivos no ambiente de trabalho.</li>
+</ul>
+<h2 id="politica-2" class="policy-anchor">2. POLÍTICA DE SEGURANÇA DO TRABALHO</h2>
+<h3>Objetivo</h3>
+<p>Prevenir acidentes e preservar a integridade física de todos os colaboradores, visitantes e terceiros.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Uso obrigatório de EPIs:</strong> todos os colaboradores devem utilizar os Equipamentos de Proteção Individual de acordo com o tipo de atividade e o ambiente em que se encontram. O uso é <strong>obrigatório em oficinas, áreas industriais, canteiros de obras, ambientes externos, áreas elétricas, hidráulicas e locais com risco químico ou biológico</strong>. Nenhuma atividade pode ser iniciada sem o EPI correspondente (capacete, botas, luvas, óculos, protetor auricular, cinto de segurança, entre outros).</li>
+<li><strong>Capacitação contínua:</strong> participação obrigatória em treinamentos e DDS (Diálogo Diário de Segurança).</li>
+<li><strong>Registro de incidentes:</strong> todo evento deve ser comunicado em até 24 horas, mesmo sem lesões.</li>
+<li><strong>Permissão de Trabalho:</strong> documento formal que autoriza o início de uma atividade com risco elevado. Deve ser emitido antes do trabalho e conter a descrição da tarefa, responsáveis, análise de riscos, medidas de controle, EPIs exigidos e assinatura do supervisor. É obrigatória para trabalhos em altura, espaços confinados, soldagem, movimentação de cargas, intervenções elétricas, áreas classificadas e qualquer outro serviço que possa oferecer perigo à integridade física.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Qualidade &amp; Segurança do Trabalho.</li>
+<li><strong>Suporte:</strong> Gestores de campo.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>Zero acidentes com afastamento.</li>
+<li>95% de adesão ao uso de EPIs.</li>
+<li>100% de incidentes registrados e analisados.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> utilizar todos os EPIs exigidos para o ambiente e tipo de atividade, mesmo em tarefas curtas. Em obras e áreas externas, usar sempre capacete, bota de segurança e colete refletivo; em áreas elétricas, luvas isolantes e protetor facial; em trabalhos em altura, cinturão com talabarte e linha de vida. Nenhum colaborador deve iniciar a tarefa sem verificar se os equipamentos estão em bom estado e adequadamente ajustados.</li>
+<li><strong>Incorreto:</strong> iniciar qualquer serviço em área de risco sem EPI completo ou sem Permissão de Trabalho assinada. Trabalhar sem óculos de proteção, sem protetor auricular em áreas ruidosas ou sem cinto de segurança em altura constitui falta grave e risco imediato à integridade física.</li>
+</ul>
+<h2 id="politica-3" class="policy-anchor">3. POLÍTICA DE TECNOLOGIA DA INFORMAÇÃO E SEGURANÇA DIGITAL</h2>
+<h3>Objetivo</h3>
+<p>Proteger os dados corporativos e garantir o uso seguro das ferramentas digitais da empresa.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Contas corporativas:</strong> obrigatórias para acesso a e-mails, nuvem e sistemas (ERP, CRM, BI).</li>
+<li><strong>Senhas seguras:</strong> mínimo de 6 caracteres, com letras, números e símbolos.</li>
+<li><strong>Autenticação multifator (MFA):</strong> obrigatória para acesso remoto.</li>
+<li><strong>VPN:</strong> deve ser usada em conexões fora da empresa.</li>
+<li><strong>Dispositivos pessoais:</strong> só podem ser usados com autorização e antivírus ativo.</li>
+<li><strong>Backups:</strong> realizados semanalmente; dados críticos são armazenados em nuvem.</li>
+<li><strong>Acesso restrito:</strong> cada colaborador deve acessar apenas o necessário para sua função.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> TI &amp; Plataformas Digitais.</li>
+<li><strong>Suporte:</strong> Qualidade &amp; Compliance.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% de usuários com MFA habilitado.</li>
+<li>99% de sucesso nos backups.</li>
+<li>Correção de falhas críticas em até 7 dias.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> salvar arquivos na nuvem corporativa, utilizar contas institucionais e manter senhas seguras. Em situações de <strong>extrema urgência</strong>, quando não houver possibilidade técnica de acesso aos sistemas corporativos, é permitido o uso de e-mail ou número pessoal para repassar informações <strong>somente mediante autorização do gestor</strong> e com o compromisso de <strong>transferir os dados para o ambiente corporativo assim que possível</strong>. O colaborador deve garantir confidencialidade, excluir imediatamente os arquivos pessoais e informar o envio ao setor de TI e ao responsável direto.</li>
+<li><strong>Incorreto:</strong> utilizar e-mail ou número pessoal de forma rotineira para comunicações de trabalho, armazenar informações da empresa em aplicativos pessoais ou compartilhar dados corporativos sem registro ou controle de segurança.</li>
+</ul>
+<h2 id="politica-4" class="policy-anchor">4. POLÍTICA DE PROTEÇÃO DE DADOS (LGPD)</h2>
+<h3>Objetivo</h3>
+<p>Garantir que a empresa cumpra a <strong>Lei nº 13.709/2018 – Lei Geral de Proteção de Dados Pessoais (LGPD)</strong>, que regula as atividades de tratamento de dados pessoais e assegura o direito à privacidade e à proteção das informações de pessoas físicas (colaboradores, clientes, fornecedores e parceiros).</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Base legal:</strong> toda coleta de dados deve ter motivo documentado e legítimo, conforme os artigos da LGPD.</li>
+<li><strong>Encarregado de Dados (DPO):</strong> responsável por supervisionar o cumprimento da lei e responder solicitações dos titulares.</li>
+<li><strong>Prazo de resposta:</strong> até 15 dias para atender solicitações de acesso, correção ou exclusão de dados.</li>
+<li><strong>Descarte seguro:</strong> documentos físicos e digitais com dados pessoais devem ser eliminados após o prazo legal, de forma que impeça sua recuperação.</li>
+<li><strong>Relato de incidentes:</strong> qualquer vazamento ou uso indevido de dados deve ser informado imediatamente (em até 24 horas) ao Encarregado de Dados.</li>
+<li><strong>Treinamento:</strong> todos os colaboradores devem participar de capacitações anuais sobre proteção de dados e confidencialidade.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Encarregado de Dados (DPO).</li>
+<li><strong>Suporte:</strong> TI e Jurídico.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% dos processos com base legal registrada.</li>
+<li>0 incidentes não comunicados.</li>
+<li>100% das respostas dentro do prazo legal.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> armazenar informações pessoais de clientes apenas nos sistemas autorizados e pastas seguras, restringindo o acesso a quem realmente necessita.</li>
+<li><strong>Correto (tratamento específico):</strong> quando houver necessidade de enviar dados pessoais a fornecedores ou parceiros (por exemplo, para emissão de nota fiscal ou contrato), o envio deve ocorrer somente com <strong>cláusula de confidencialidade</strong> e <strong>registro do motivo da transferência</strong>.</li>
+<li><strong>Incorreto:</strong> compartilhar dados pessoais de colaboradores ou clientes por aplicativos de mensagens, e-mails pessoais ou em planilhas não protegidas, sem autorização e sem base legal registrada.</li>
+</ul>
+<h2 id="politica-5" class="policy-anchor">5. POLÍTICA DE COMPRAS</h2>
+<h3>Objetivo</h3>
+<p>Garantir transparência, qualidade, economia e controle nas aquisições, estimulando uma cultura de comparativo de preços e confiabilidade dos fornecedores.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Cotações de preço:</strong> recomenda-se realizar <strong>no mínimo três cotações</strong> sempre que possível, mesmo quando o item for padronizado ou houver fornecedor único. O objetivo é criar uma <strong>rotina e cultura comparativa</strong>, buscando o melhor custo-benefício e avaliando critérios de prazo, qualidade, garantia e histórico de fornecimento. Quando não for possível obter três cotações, o responsável pela compra deverá justificar formalmente no pedido.</li>
+<li><strong>Ordem de Compra (OC):</strong> documento obrigatório antes de qualquer fornecimento, garantindo rastreabilidade, autorização e controle contábil.</li>
+<li><strong>Apropriação por Obra:</strong> cada aquisição deve estar vinculada a um centro de custo, obra ou projeto específico, assegurando clareza na origem e destino dos recursos.</li>
+<li><strong>Homologação de Fornecedores:</strong> é o processo de <strong>avaliação, aprovação e registro de fornecedores confiáveis</strong>, com base em critérios de qualidade, prazo, atendimento, capacidade técnica e conformidade fiscal. Somente fornecedores homologados poderão ser utilizados para compras recorrentes, serviços críticos ou valores acima do limite definido pela Diretoria. O cadastro deve conter documentos atualizados (CNPJ, certidões, referências, portfólio e histórico de entregas).</li>
+<li><strong>Ética nas relações comerciais:</strong> é proibido o recebimento de comissões, presentes ou vantagens indevidas em qualquer negociação.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Compras e Financeiro.</li>
+<li><strong>Suporte:</strong> Engenharia/Projetos.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>95% das compras com cotações registradas.</li>
+<li>Entregas dentro do prazo (OTIF) ≥ 90%.</li>
+<li>Atualização anual do cadastro de fornecedores.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> todas as solicitações de compra devem conter no mínimo três cotações (quando possível) e gerar uma <strong>Ordem de Compra (OC)</strong> antes do fornecimento. A OC deve ser <strong>anexada e salva prioritariamente na Nuvem corporativa, na pasta intitulada “Ordem de Compra (Anual)”</strong>, organizada por ano, obra, projeto ou setor. Isso garante o melhor controle, rastreabilidade e fácil auditoria das aquisições. Em casos excepcionais ou emergenciais, a compra direta poderá ocorrer, desde que <strong>comunicada imediatamente ao setor de Compras</strong> e regularizada com o envio dos documentos fiscais e emissão posterior da OC.</li>
+<li><strong>Incorreto:</strong> efetuar compras diretas com fornecedores presenciais ou online sem comunicar previamente o setor de Compras. Mesmo em situações de urgência, a ausência de comunicação e de registro da OC compromete o controle financeiro e fiscal da empresa. Nenhuma compra deve permanecer sem posterior registro, comprovação e vinculação ao centro de custo correspondente.</li>
+</ul>
+<h2 id="politica-6" class="policy-anchor">6. POLÍTICA DE VIAGENS E REEMBOLSOS</h2>
+<h3>Objetivo</h3>
+<p>Padronizar as despesas relacionadas a viagens profissionais, garantindo transparência, controle e correta prestação de contas, além de assegurar o uso responsável dos recursos corporativos.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Aprovação prévia:</strong> toda viagem deve ser solicitada e aprovada pelo gestor imediato, contendo roteiro, motivo e estimativa de gastos.</li>
+<li><strong>Cartões e recursos corporativos:</strong> sempre que possível, devem ser utilizados <strong>cartões corporativos ou adiantamentos autorizados</strong> para cobrir as despesas de viagem. Esses recursos são exclusivos para fins profissionais, sendo proibido o uso pessoal.</li>
+<li><strong>Uso de recursos pessoais:</strong> em situações excepcionais, quando não for possível utilizar os meios corporativos, o colaborador poderá arcar com despesas utilizando <strong>cartão ou dinheiro pessoal</strong>, devendo <strong>guardar todas as notas fiscais originais</strong> e solicitar o <strong>reembolso no prazo máximo de 3 dias úteis (D+3)</strong> após o retorno da viagem.</li>
+<li><strong>Prestação de contas:</strong> todos os comprovantes, notas fiscais e formulários de reembolso devem ser entregues ao setor Financeiro para conferência e registro contábil.</li>
+<li><strong>Despesas não reembolsáveis:</strong> qualquer gasto de natureza pessoal (alimentação de terceiros, itens pessoais, lazer, multas de trânsito ou combustível de uso privado) não será aceito.</li>
+<li><strong>Reembolsos fora do prazo:</strong> solicitações entregues após o prazo de D+3 poderão ser analisadas, mas estão sujeitas à aprovação da Diretoria.</li>
+<li><strong>Controle financeiro:</strong> o setor Financeiro deverá manter planilha e histórico de viagens com valores, datas e destinos, para auditoria e controle orçamentário.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Gestor direto.</li>
+<li><strong>Gestão:</strong> Financeiro.</li>
+<li><strong>Suporte:</strong> Administração e Contabilidade.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>95% das prestações entregues dentro do prazo (D+3).</li>
+<li>Reembolsos processados em até 5 dias úteis.</li>
+<li>100% de notas fiscais arquivadas na pasta de viagens na Nuvem corporativa.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> utilizar o cartão corporativo para hospedagem e alimentação durante viagem aprovada; quando não houver possibilidade, realizar o pagamento pessoalmente e solicitar o reembolso apresentando as notas fiscais originais no retorno, dentro do prazo estabelecido.</li>
+<li><strong>Incorreto:</strong> usar o cartão corporativo para despesas pessoais, não apresentar notas fiscais originais ou solicitar reembolso sem comprovação da despesa.</li>
+</ul>
+<h2 id="politica-7" class="policy-anchor">7. POLÍTICA DE GESTÃO DOCUMENTAL</h2>
+<h3>Objetivo</h3>
+<p>Assegurar a organização, a rastreabilidade e o controle dos documentos da Mais Hidro Soluções, garantindo que todos os registros corporativos estejam atualizados, acessíveis e protegidos contra perda, uso indevido ou vencimento de validade.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Armazenamento centralizado:</strong> todos os arquivos devem ser mantidos exclusivamente na <strong>Nuvem corporativa</strong>, proibido o armazenamento em computadores pessoais, pen drives ou contas particulares.</li>
+<li><strong>Versionamento:</strong> cada documento deve conter número de versão, data de emissão, responsável e breve descrição da alteração. O histórico de revisões deve ser preservado para rastreabilidade.</li>
+<li><strong>Controle de acesso:</strong> o acesso deve ser concedido conforme a função e necessidade de cada colaborador. Documentos sensíveis (contratos, licitações, relatórios técnicos) exigem permissão restrita.</li>
+<li><strong>Supervisão de vencimentos:</strong> o setor Administrativo, em conjunto com cada área responsável, deve <strong>monitorar os documentos com prazos de validade</strong>, como licenças, certidões, contratos, seguros, calibrações e certificados. Um <strong>alerta de renovação</strong> deve ser emitido com <strong>30 dias de antecedência</strong> do vencimento.</li>
+<li><strong>Atualização periódica:</strong> documentos técnicos, operacionais e administrativos devem ser revisados ao menos <strong>uma vez por ano</strong> ou sempre que houver mudança relevante em processos, legislação ou estrutura organizacional.</li>
+<li><strong>Política de atualização e arquivamento:</strong> ao revisar um documento, a nova versão deve substituir a anterior e o arquivo antigo deve ser movido para a pasta <strong>“Documentos – Arquivados (Histórico)”</strong> na Nuvem corporativa, com data e responsável pela atualização.</li>
+<li><strong>Padrão de nomenclatura:</strong> cada arquivo deve seguir um formato padrão: Setor_TipoDocumento_Título_Versão_Data. Exemplo: Comercial_Proposta_TipoB_V1_2025.</li>
+<li><strong>Confidencialidade:</strong> informações estratégicas, financeiras ou técnicas não devem ser compartilhadas sem autorização formal.</li>
+<li><strong>Backup e integridade:</strong> todos os documentos armazenados na Nuvem devem ter cópia de segurança automática e política de recuperação em caso de perda de dados.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> TI &amp; Plataformas Digitais.</li>
+<li><strong>Suporte:</strong> Todas as áreas administrativas e técnicas.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% dos documentos corporativos ativos salvos na Nuvem.</li>
+<li>100% dos documentos com controle de versão identificado.</li>
+<li>0 documentos expirados sem aviso prévio.</li>
+<li>100% de revisões realizadas dentro do prazo anual.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> salvar relatórios e contratos na pasta correspondente da Nuvem corporativa, manter controle de versão e configurar lembretes para renovação de licenças e certidões.</li>
+<li><strong>Incorreto:</strong> armazenar documentos importantes apenas em computadores pessoais, perder prazos de validade de certificados ou manter versões antigas em circulação.</li>
+</ul>
+<h2 id="politica-8" class="policy-anchor">8. POLÍTICA DE COMUNICAÇÃO E MARCA</h2>
+<h3>Objetivo</h3>
+<p>Garantir a uniformidade da identidade visual, fortalecer a reputação da Mais Hidro Soluções e assegurar que todas as comunicações internas e externas representem corretamente os valores e o posicionamento da empresa.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Identidade visual:</strong> o logotipo, cores institucionais, tipografia e demais elementos visuais devem seguir fielmente o <strong>Manual de Identidade Visual</strong> da empresa. Qualquer uso fora do padrão (cores alteradas, distorção, fundos inadequados) é proibido.</li>
+<li><strong>Aprovação de materiais:</strong> todos os materiais gráficos, digitais ou impressos (folders, banners, apresentações, vídeos, catálogos, etc.) devem ser <strong>revisados e aprovados pelo setor de Marketing e pela Diretoria</strong> antes da divulgação.</li>
+<li><strong>Comunicação oficial:</strong> toda comunicação em nome da Mais Hidro Soluções deve utilizar os canais institucionais (e-mail corporativo, telefone empresarial, site oficial, perfis de redes sociais autorizados e documentos padronizados).</li>
+<li><strong>Redes sociais e publicações:</strong> somente os perfis oficiais da empresa poderão fazer publicações institucionais. Colaboradores podem compartilhar postagens da empresa, mas não devem criar conteúdos próprios que representem a marca sem autorização prévia.</li>
+<li><strong>Padronização de documentos e assinaturas:</strong> todos os documentos, e-mails e propostas devem seguir o modelo institucional, com assinatura digital padronizada contendo logotipo, cargo, telefone e e-mail corporativo.</li>
+<li><strong>Eventos e feiras:</strong> toda participação da empresa em feiras, exposições ou eventos deve seguir as diretrizes visuais e de comunicação da marca. A montagem de estandes, banners e brindes deve ser previamente aprovada pelo Marketing.</li>
+<li><strong>Imprensa e relações públicas:</strong> somente a Diretoria ou o responsável designado poderá conceder entrevistas, declarações ou divulgar informações à imprensa.</li>
+<li><strong>Proteção da marca:</strong> qualquer uso indevido da marca, logotipo ou materiais institucionais por terceiros deve ser comunicado imediatamente ao Marketing e ao setor Jurídico para providências legais.</li>
+<li><strong>Registro e histórico:</strong> o Marketing deve manter uma <strong>pasta na Nuvem corporativa intitulada “Comunicação e Marca (Anual)”</strong> contendo todas as peças aprovadas, campanhas, arquivos editáveis e históricos de publicações.</li>
+<li><strong>Comunicação interna:</strong> informações, comunicados e circulares internas devem ser emitidos preferencialmente via e-mail corporativo ou aplicativo interno, com linguagem clara e respeitosa, reforçando os valores da empresa.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Comercial &amp; Marketing.</li>
+<li><strong>Suporte:</strong> TI, Jurídico e Qualidade.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% das comunicações e materiais revisados antes da divulgação.</li>
+<li>0 publicações não autorizadas em canais oficiais.</li>
+<li>100% de peças salvas na Nuvem na pasta “Comunicação e Marca (Anual)”.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> enviar material publicitário para revisão do Marketing antes da postagem, usar o logotipo oficial e salvar a versão final aprovada na pasta “Comunicação e Marca (Anual)”.</li>
+<li><strong>Incorreto:</strong> publicar artes ou textos não revisados, usar logotipos antigos ou distorcidos, conceder entrevistas sem autorização ou compartilhar informações internas em redes sociais pessoais.</li>
+</ul>
+<h2 id="politica-8-1" class="policy-anchor">8.1 POLÍTICA DE COMUNICAÇÃO INTERNA</h2>
+<h3>Objetivo</h3>
+<p>Estabelecer diretrizes claras sobre o uso dos canais de comunicação interna da Mais Hidro Soluções, priorizando agilidade, transparência e responsabilidade no compartilhamento de informações corporativas.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Canal principal – WhatsApp corporativo:</strong> o WhatsApp corporativo da empresa é o <strong>principal meio de comunicação interna</strong>, utilizado para trocas rápidas, alinhamentos de rotina, avisos operacionais, decisões cotidianas e comunicação entre setores. Cada setor ou projeto possuirá grupos oficiais administrados pelos líderes ou responsáveis designados.</li>
+<li><strong>Canal secundário – E-mail corporativo:</strong> o e-mail institucional é o <strong>meio complementar</strong>, voltado a comunicações formais, envio de documentos oficiais, solicitações administrativas e interações externas.</li>
+<li><strong>Responsabilidade e sigilo:</strong> todas as mensagens enviadas nos canais corporativos devem manter <strong>tom profissional, clareza, respeito e sigilo das informações</strong>. É proibido compartilhar conteúdos pessoais, políticos, ofensivos ou que prejudiquem a imagem da empresa.</li>
+<li><strong>Registro e rastreabilidade:</strong> decisões e orientações importantes discutidas via WhatsApp devem ser posteriormente <strong>registradas na Nuvem corporativa</strong> (em relatórios, atas, checklists ou formulários digitais).</li>
+<li><strong>Organização dos grupos:</strong> cada grupo deve possuir nome padronizado com o setor e o ano (exemplo: “Comercial – 2025”), mantendo apenas integrantes ativos. Mensagens irrelevantes ou fora do contexto de trabalho não são permitidas.</li>
+<li><strong>Tempo de resposta:</strong> comunicações via WhatsApp devem ser respondidas preferencialmente em até 2 horas dentro do horário comercial, e e-mails em até 24 horas úteis.</li>
+<li><strong>Responsabilidade pelo uso:</strong> o colaborador é responsável pelo uso adequado de seu número e acesso corporativo. Em caso de desligamento, deve sair dos grupos e garantir que nenhuma informação confidencial permaneça em seu dispositivo pessoal.</li>
+<li><strong>Integração entre canais:</strong> qualquer informação relevante trocada no WhatsApp que envolva contratos, aprovações financeiras ou decisões técnicas deverá ser <strong>confirmada posteriormente por e-mail</strong> ou registrada no sistema interno (ERP/CRM).</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Comercial &amp; Marketing / TI &amp; Plataformas Digitais.</li>
+<li><strong>Suporte:</strong> Todos os gestores de área.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% dos setores com grupos oficiais e administradores definidos.</li>
+<li>0 casos de uso indevido dos canais corporativos.</li>
+<li>100% das decisões relevantes registradas na Nuvem.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> utilizar o grupo de WhatsApp do setor para comunicar informações operacionais, avisar sobre deslocamentos, atualizações de status de projetos, notificações de campo ou decisões rápidas, sempre com clareza e objetividade. Caso o tema envolva decisões relevantes (como aprovações, mudanças de escopo ou registro de ocorrências), o colaborador deve salvar o conteúdo posteriormente na Nuvem corporativa para manter a rastreabilidade.</li>
+<li><strong>Incorreto:</strong> compartilhar informações sigilosas fora dos grupos oficiais, discutir temas pessoais ou emitir comunicados sem verificar a fonte. O envio de áudios é permitido, desde que <strong>tenha conteúdo profissional e seja objetivo</strong>, respeitando o tempo e a clareza da comunicação.</li>
+</ul>
+<h2 id="politica-9" class="policy-anchor">9. POLÍTICA DE ATIVOS E PATRIMÔNIO</h2>
+<h3>Objetivo</h3>
+<p>Assegurar o controle, rastreabilidade e conservação de todos os bens materiais da Mais Hidro Soluções, garantindo sua correta utilização, manutenção e registro no sistema corporativo <strong>S2 ERP</strong>.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Identificação de ativos:</strong> todos os bens da empresa (equipamentos, ferramentas, veículos, computadores, móveis, entre outros) devem possuir <strong>etiquetas de patrimônio padronizadas</strong>, contendo número de identificação e descrição resumida. O controle e o histórico desses itens são realizados diretamente pelo <strong>S2 ERP</strong>, permitindo rastreabilidade completa.<br></li>
+<li><strong>Cadastro e atualização:</strong> novos bens devem ser cadastrados no <strong>S2 ERP</strong> logo após sua entrada na empresa, com informações de número patrimonial, categoria, localização e responsável pelo uso.<br></li>
+<li><strong>Inventário físico:</strong> o setor de Administração e Patrimônio deve realizar inventários periódicos, no mínimo uma vez por ano, para verificar a existência física, estado de conservação e correspondência com os registros do sistema.<br></li>
+<li><strong>Manutenção preventiva:</strong> equipamentos e veículos devem seguir o cronograma de manutenção preventiva, com registros obrigatórios no sistema.<br></li>
+<li><strong>Movimentação de ativos:</strong> qualquer transferência de bens entre setores ou colaboradores deve ser registrada no <strong>S2 ERP</strong>, acompanhada de termo de responsabilidade.<br></li>
+<li><strong>Perda, extravio ou furto:</strong> o colaborador responsável deve comunicar imediatamente ao setor de Administração e Patrimônio e à Diretoria. Em caso de furto, é obrigatória a emissão de <strong>Boletim de Ocorrência (B.O.)</strong> e abertura de análise interna para reposição.<br></li>
+<li><strong>Termo de responsabilidade:</strong> cada colaborador que utilizar bens permanentes ou portáteis deve assinar um termo de responsabilidade, declarando ciência sobre a guarda e devolução do item em caso de desligamento ou substituição.<br></li>
+<li><strong>Descarte e substituição:</strong> bens obsoletos, danificados ou fora de uso devem ser avaliados pelo setor responsável antes do descarte. O descarte ou substituição somente poderá ocorrer mediante autorização da Diretoria e registro formal no sistema.<br></li>
+<li><strong>Auditoria interna:</strong> será realizada anualmente para validar o inventário e confirmar a integridade dos registros no <strong>S2 ERP</strong>.<br></li>
+<li><strong>Responsabilidade e conservação:</strong> é dever de todos os colaboradores zelar pelos bens da empresa, manter o uso adequado e comunicar qualquer dano, falha ou necessidade de reparo. O uso indevido, negligência ou descuido poderá resultar em responsabilização.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Administração e Patrimônio.</li>
+<li><strong>Suporte:</strong> Setor de Compras e Financeiro.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% dos bens identificados com etiquetas de patrimônio.</li>
+<li>100% dos novos ativos cadastrados no <strong>S2 ERP</strong> até 48h após o recebimento.</li>
+<li>100% de inventários anuais realizados.</li>
+<li>0 bens sem termo de responsabilidade vinculado.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> cadastrar novos equipamentos no <strong>S2 ERP</strong>, fixar a etiqueta de patrimônio e vincular ao colaborador responsável, mantendo as informações atualizadas.</li>
+<li><strong>Incorreto:</strong> movimentar equipamentos entre setores sem registro no sistema, deixar de comunicar danos ou perdas, ou descartar bens sem autorização formal.</li>
+</ul>
+<h2 id="politica-10" class="policy-anchor">10. POLÍTICA DE HOME OFFICE</h2>
+<h3>Objetivo</h3>
+<p>Garantir segurança, produtividade e responsabilidade nas atividades realizadas fora do ambiente físico da empresa, assegurando que o desempenho e a confidencialidade sejam mantidos durante o trabalho remoto.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Autorização e elegibilidade:</strong> o trabalho em formato home office deve ser previamente autorizado pela Diretoria ou gestor imediato, considerando a natureza da função e as necessidades operacionais.<br></li>
+<li><strong>Infraestrutura mínima:</strong> o colaborador deve possuir local adequado, com internet estável, energia segura e ambiente livre de distrações. Equipamentos fornecidos pela empresa devem seguir as mesmas regras de uso e conservação aplicáveis aos bens corporativos.<br></li>
+<li><strong>Acesso seguro:</strong> é obrigatório o uso de <strong>VPN (Rede Privada Virtual)</strong> e <strong>autenticação multifator (MFA)</strong> para acessar sistemas internos e documentos corporativos.<br></li>
+<li><strong>Controle e produtividade:</strong> todas as tarefas e entregas devem ser registradas e acompanhadas pelo gestor direto através do <strong>S2 ERP</strong> ou planilhas corporativas na Nuvem.<br></li>
+<li><strong>Comunicação:</strong> durante o expediente, o colaborador deve permanecer acessível via <strong>WhatsApp corporativo</strong> e participar das reuniões agendadas por videoconferência.<br></li>
+<li><strong>Sigilo e confidencialidade:</strong> informações corporativas não devem ser compartilhadas fora dos canais oficiais. É proibido o uso de computadores pessoais sem autorização.<br></li>
+<li><strong>Responsabilidade com equipamentos:</strong> todo colaborador é responsável pela conservação dos equipamentos fornecidos (notebook, periféricos, etc.), devendo comunicá-los em caso de avarias ou defeitos.<br></li>
+<li><strong>Segurança de dados:</strong> arquivos e documentos devem ser salvos exclusivamente na Nuvem corporativa. O uso de pendrives e dispositivos externos é restrito e requer aprovação do setor de TI.<br></li>
+<li><strong>Avaliação de desempenho:</strong> o gestor deve avaliar o desempenho e cumprimento das metas semanalmente, assegurando produtividade equivalente ao trabalho presencial.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> TI e RH.</li>
+<li><strong>Suporte:</strong> Gestores de área.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% dos acessos realizados via VPN e MFA.</li>
+<li>100% dos colaboradores com tarefas registradas no sistema.</li>
+<li>0 incidentes de segurança digital.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> acessar os sistemas corporativos via VPN, registrar atividades diárias no S2 ERP e manter contato com o gestor durante o expediente.</li>
+<li><strong>Incorreto:</strong> utilizar redes públicas de Wi-Fi, não registrar entregas ou compartilhar arquivos corporativos por e-mails pessoais.</li>
+</ul>
+<h2 id="politica-11" class="policy-anchor">11. POLÍTICA DE QUALIDADE</h2>
+<h3>Objetivo</h3>
+<p>Assegurar a padronização, melhoria contínua e conformidade dos processos, produtos e serviços da Mais Hidro Soluções, promovendo a satisfação do cliente e a eficiência operacional.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Gestão de não conformidades (NC):</strong> qualquer falha, erro ou desvio de processo deve ser registrado no sistema interno e tratado no prazo máximo de 10 dias úteis.<br></li>
+<li><strong>Análise de causa raiz:</strong> toda NC deve ter causa devidamente identificada, com elaboração de plano de ação para correção e prevenção de recorrências.<br></li>
+<li><strong>Plano de ação 5W2H:</strong> deve conter o que será feito, por que, quem executará, quando, como, onde e quanto custará.<br></li>
+<li><strong>Auditorias internas:</strong> realizadas semestralmente para verificar conformidade com políticas e procedimentos.<br></li>
+<li><strong>Revisão de processos:</strong> os procedimentos (POPs) devem ser avaliados anualmente para garantir que estejam atualizados e eficazes.<br></li>
+<li><strong>Indicadores de desempenho:</strong> cada área deve manter indicadores de qualidade específicos (prazos, retrabalhos, satisfação do cliente, eficiência).<br></li>
+<li><strong>Ações preventivas:</strong> devem ser priorizadas antes das corretivas, visando reduzir falhas e aumentar a confiabilidade dos processos.<br></li>
+<li><strong>Capacitação:</strong> todos os colaboradores devem receber treinamentos periódicos sobre boas práticas de qualidade.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Qualidade &amp; Compliance.</li>
+<li><strong>Suporte:</strong> Todos os setores operacionais.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% das NCs tratadas em até 10 dias.</li>
+<li>≥ 90% de satisfação de clientes em atendimentos avaliados.</li>
+<li>100% de auditorias internas realizadas dentro do prazo.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> registrar um erro de montagem no sistema, investigar a causa (ex.: falha no processo de revisão) e aplicar correção com base no método 5W2H.</li>
+<li><strong>Incorreto:</strong> identificar um problema e corrigi-lo sem registrar a NC, impedindo o rastreio e a análise de causa.</li>
+</ul>
+<h2 id="politica-12" class="policy-anchor">12. POLÍTICA DE GESTÃO E REVISÃO DAS POLÍTICAS</h2>
+<h3>Objetivo</h3>
+<p>Garantir que todas as políticas internas da Mais Hidro Soluções permaneçam atualizadas, alinhadas à legislação vigente e coerentes com a cultura e os objetivos estratégicos da empresa.</p>
+<h3>Regras Principais</h3>
+<ul class="content-list">
+<li><strong>Periodicidade:</strong> todas as políticas devem ser revisadas anualmente ou sempre que houver mudanças significativas em processos, estrutura ou legislação.<br></li>
+<li><strong>Responsabilidade:</strong> cada gestor de área é responsável por revisar e propor ajustes nas políticas relacionadas ao seu setor, sob coordenação da Diretoria e do setor de Qualidade &amp; Compliance.<br></li>
+<li><strong>Controle de versão:</strong> toda atualização deve conter o número da versão, data, responsável e breve descrição das alterações.<br></li>
+<li><strong>Publicação:</strong> as políticas atualizadas devem ser publicadas na <strong>Nuvem corporativa</strong> na pasta “Políticas Internas – Vigentes”, e a versão anterior deve ser movida para “Políticas Internas – Arquivadas”.<br></li>
+<li><strong>Comunicação:</strong> toda revisão deve ser comunicada oficialmente a todos os colaboradores, por meio do grupo corporativo ou e-mail institucional, com destaque para as principais mudanças.<br></li>
+<li><strong>Treinamentos de atualização:</strong> sempre que uma política for revisada, o setor de RH deve coordenar um treinamento de atualização para todos os colaboradores afetados.<br></li>
+<li><strong>Auditoria e conformidade:</strong> o setor de Qualidade &amp; Compliance deve realizar auditoria anual para garantir que todas as políticas estejam atualizadas e em uso.<br></li>
+<li><strong>Controle documental:</strong> o setor de TI deve garantir o versionamento e o acesso restrito às pastas de políticas na Nuvem.</li>
+</ul>
+<h3>Responsáveis</h3>
+<ul class="content-list">
+<li><strong>Aprovador:</strong> Diretoria.</li>
+<li><strong>Gestão:</strong> Qualidade &amp; Compliance.</li>
+<li><strong>Suporte:</strong> RH, TI e Gestores de área.</li>
+</ul>
+<h3>Indicadores</h3>
+<ul class="content-list">
+<li>100% das políticas revisadas anualmente.</li>
+<li>0 políticas vencidas ou desatualizadas.</li>
+<li>100% dos colaboradores comunicados sobre revisões.</li>
+</ul>
+<h3>Exemplos Práticos</h3>
+<ul class="content-list">
+<li><strong>Correto:</strong> revisar anualmente a Política de Segurança do Trabalho, atualizar a versão no documento e comunicar a mudança aos gestores.</li>
+<li><strong>Incorreto:</strong> aplicar políticas antigas sem verificar se houve atualização recente ou manter versões ultrapassadas circulando entre setores.</li>
+</ul>
+<p><strong>Aprovador:</strong> Diretoria Mais Hidro Soluções<br><strong>Versão:</strong> 0.0<br><strong>Data de emissão:</strong> 10/10/2025<br><strong>Próxima revisão:</strong> 10/10/2026</p></div>
+    </article>
+  </div>
+</section>
+
+<section id="view-dayoff" class="doc-view">
+  <div class="shell">
+    <div class="doc-top"><button class="back" onclick="goHome()">← Voltar</button></div>
+    <article class="document">
+      <header class="doc-head">
+        <span class="doc-index">2</span>
+        <h1>Day Off</h1>
+        <p>Política Interna de Day-Off — Datas Comemorativas e Eventos Pessoais</p>
+      </header>
+      <div class="doc-content">
+
+<details class="policy-picker">
+  <summary>
+    <span class="picker-summary-icon">☰</span>
+    <span class="picker-summary-copy">
+      <strong>Selecionar seção</strong>
+      <small>Clique para ver todas as seções do Day Off</small>
+    </span>
+    <span class="picker-manage-trigger" title="Modo de edição" onclick="toggleManage(event,this)" aria-label="Ativar modo de edição">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+      </svg>
+    </span>
+    <span class="picker-chevron">⌄</span>
+  </summary>
+  <div class="picker-list">
+    <button type="button" class="picker-item" onclick="goPolicy('day-1',this)">
+              <span class="picker-number">1</span>
+              <span class="picker-name">Objetivo</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-2',this)">
+              <span class="picker-number">2</span>
+              <span class="picker-name">Benefícios</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-3',this)">
+              <span class="picker-number">3</span>
+              <span class="picker-name">Aniversário</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-4',this)">
+              <span class="picker-number">4</span>
+              <span class="picker-name">Casamento</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-5',this)">
+              <span class="picker-number">5</span>
+              <span class="picker-name">Solicitação e Aprovação</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-6',this)">
+              <span class="picker-number">6</span>
+              <span class="picker-name">Registro no Ponto</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-7',this)">
+              <span class="picker-number">7</span>
+              <span class="picker-name">Trabalho Durante o Day-Off</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-8',this)">
+              <span class="picker-number">8</span>
+              <span class="picker-name">Regras Gerais</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-9',this)">
+              <span class="picker-number">9</span>
+              <span class="picker-name">Legislação Aplicável</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-10',this)">
+              <span class="picker-number">10</span>
+              <span class="picker-name">Vigência e Alterações</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('day-anexo',this)">
+              <span class="picker-number">Anexo I</span>
+              <span class="picker-name">Termo de Ciência e Adesão</span>
+              <span class="picker-arrow">→</span>
+            </button>
+  </div>
+</details>
+
+<h2>POLÍTICA INTERNA DE DAY-OFF</h2>
+<h2>Datas Comemorativas e Eventos Pessoais</h2>
+<p><strong>Empresa:</strong> MAIS MECÂNICA INTEGRADORA DE SOLUÇÕES LTDA<br><strong>CNPJ:</strong> 47.947.137/0001-11<br><strong>Vigência:</strong> 20/08/2026<br><strong>Responsável:</strong> Administração / Departamento Pessoal / Diretoria</p>
+<h2 id="day-1" class="policy-anchor">1. Objetivo</h2>
+<p>Esta política estabelece as regras para concessão de <strong>Day-Off</strong><strong> remunerado</strong> aos colaboradores em determinadas datas comemorativas e eventos pessoais, garantindo organização interna, tratamento igualitário e segurança trabalhista.</p>
+<h2 id="day-2" class="policy-anchor">2. Benefícios</h2>
+<div class="table-wrap"><table><tr><th>Evento</th><th>Benefício</th></tr><tr><td>Aniversário do colaborador</td><td>1 dia remunerado por ano</td></tr><tr><td>Casamento civil</td><td>1 Day-Off remunerado adicional aos dias previstos em lei</td></tr><tr><td>Formalização de união estável</td><td>1 dia remunerado</td></tr></table></div>
+<p>A empresa poderá incluir outros eventos mediante atualização formal desta política.</p>
+<h2 id="day-3" class="policy-anchor">3. Aniversário</h2>
+<p>O colaborador terá direito a <strong>1 </strong><strong>Day-Off</strong><strong> por ano</strong>, preferencialmente no dia do aniversário.</p>
+<p>Caso o aniversário ocorra em sábado, domingo, feriado ou dia sem expediente, o benefício poderá ser utilizado em data próxima, mediante alinhamento com o gestor.</p>
+<p>Por necessidade operacional, a data poderá ser remarcada, sem perda do benefício.</p>
+<h2 id="day-4" class="policy-anchor">4. Casamento</h2>
+<p>O Day-Off concedido pela empresa <strong>não substitui a licença legal por casamento prevista no art. 473 da CLT</strong>.</p>
+<p>Além dos dias assegurados pela legislação, a empresa concederá <strong>1 </strong><strong>Day-Off</strong><strong> remunerado adicional</strong>, mediante apresentação de documento comprobatório.</p>
+<h2 id="day-5" class="policy-anchor">5. Solicitação e Aprovação</h2>
+<p>O colaborador deverá comunicar previamente ao gestor e ao setor responsável sobre a utilização do benefício.</p>
+<p>Sempre que possível:</p>
+<ul class="content-list">
+<li>aniversário: comunicação mínima de 10 dias;</li>
+<li>casamento ou união estável: comunicação mínima de 15 dias.</li>
+</ul>
+<p>Em caso de necessidade operacional, a empresa poderá ajustar a data em conjunto com o colaborador.</p>
+<h2 id="day-6" class="policy-anchor">6. Registro no Ponto</h2>
+<p>O Day-Off deverá ser registrado no sistema de ponto como:</p>
+<p><strong>“</strong><strong>Day-Off</strong><strong> – Ausência Remunerada / Abono Empresa”.</strong></p>
+<p>O benefício:</p>
+<ul class="content-list">
+<li>não gera desconto salarial;</li>
+<li>não gera banco de horas negativo;</li>
+<li>não exige compensação;</li>
+<li>não será considerado falta injustificada;</li>
+<li>não deverá ser lançado como férias, atestado ou licença legal.</li>
+</ul>
+<h2 id="day-7" class="policy-anchor">7. Trabalho Durante o Day-Off</h2>
+<p>Durante o Day-Off, o colaborador estará dispensado das atividades profissionais.</p>
+<p>Caso seja necessário trabalhar por solicitação da empresa, o benefício deverá ser remarcado para outra data.</p>
+<h2 id="day-8" class="policy-anchor">8. Regras Gerais</h2>
+<p>O Day-Off:</p>
+<ul class="content-list">
+<li>não poderá ser convertido em dinheiro;</li>
+<li>não será acumulado indefinidamente;</li>
+<li>não poderá ser transferido para outro colaborador;</li>
+<li>deverá observar as necessidades operacionais da empresa;</li>
+<li>deverá ser aplicado de maneira uniforme aos colaboradores em situações equivalentes.</li>
+</ul>
+<p>A utilização indevida do benefício ou apresentação de informações falsas poderá resultar em medidas administrativas e disciplinares.</p>
+<h2 id="day-9" class="policy-anchor">9. Legislação Aplicável</h2>
+<p>Esta política deverá ser interpretada em conjunto com:</p>
+<ul class="content-list">
+<li>Consolidação das Leis do Trabalho – CLT;</li>
+<li>Convenção Coletiva de Trabalho vigente;</li>
+<li>Lei nº 605/1949;</li>
+<li>Lei nº 13.709/2018 – LGPD;</li>
+<li>demais normas trabalhistas aplicáveis.</li>
+</ul>
+<p>Caso exista conflito entre esta política e norma legal ou coletiva obrigatória, prevalecerá a legislação ou norma coletiva aplicável.</p>
+<h2 id="day-10" class="policy-anchor">10. Vigência e Alterações</h2>
+<p>Esta política entra em vigor em 20/08/2026 e poderá ser revisada pela empresa em razão de alterações legais, convencionais ou necessidades administrativas, respeitando os direitos trabalhistas aplicáveis.</p>
+<h2 id="day-anexo" class="policy-anchor">ANEXO I</h2>
+<p><strong>Termo de Ciência e Adesão </strong><strong>á</strong><strong> política de </strong><strong>Day-off</strong></p></div>
+    </article>
+  </div>
+</section>
+
+<section id="view-beneficios" class="doc-view">
+  <div class="shell">
+    <div class="doc-top"><button class="back" onclick="goHome()">← Voltar</button></div>
+    <article class="document">
+      <header class="doc-head">
+        <span class="doc-index">3</span>
+        <h1>Prêmio por Desempenho Extraordinário</h1>
+        <p>Prêmio por Desempenho Extraordinário</p>
+      </header>
+      <div class="doc-content">
+
+
+<details class="policy-picker">
+  <summary>
+    <span class="picker-summary-icon">☰</span>
+    <span class="picker-summary-copy">
+      <strong>Selecionar seção</strong>
+      <small>Clique para ver todo o conteúdo</small>
+    </span>
+    <span class="picker-manage-trigger" title="Modo de edição" onclick="toggleManage(event,this)" aria-label="Ativar modo de edição">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+      </svg>
+    </span>
+    <span class="picker-chevron">⌄</span>
+  </summary>
+  <div class="picker-list">
+    <button type="button" class="picker-item" onclick="goPolicy('beneficio-1',this)">
+              <span class="picker-number">1</span>
+              <span class="picker-name">Objetivo</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-2',this)">
+              <span class="picker-number">2</span>
+              <span class="picker-name">Fundamentação Legal e Fiscal</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-3',this)">
+              <span class="picker-number">3</span>
+              <span class="picker-name">Natureza e Requisitos Essenciais do Prêmio</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-4',this)">
+              <span class="picker-number">4</span>
+              <span class="picker-name">Desempenho Ordinariamente Esperado</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-5',this)">
+              <span class="picker-number">5</span>
+              <span class="picker-name">Caracterização do Desempenho Extraordinário</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-6',this)">
+              <span class="picker-number">6</span>
+              <span class="picker-name">Critérios de Análise</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-7',this)">
+              <span class="picker-number">7</span>
+              <span class="picker-name">Condutas e Modelos Vedados</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-8',this)">
+              <span class="picker-number">8</span>
+              <span class="picker-name">Apuração do Resultado</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-9',this)">
+              <span class="picker-number">9</span>
+              <span class="picker-name">Deliberação e Definição do Valor</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-10',this)">
+              <span class="picker-number">10</span>
+              <span class="picker-name">Participação Coletiva e Individualização</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-11',this)">
+              <span class="picker-number">11</span>
+              <span class="picker-name">Aprovação</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-12',this)">
+              <span class="picker-number">12</span>
+              <span class="picker-name">Pagamento e Tratamento Tributário</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-13',this)">
+              <span class="picker-number">13</span>
+              <span class="picker-name">Não Automaticidade e Ausência de Direito Adquirido</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-14',this)">
+              <span class="picker-number">14</span>
+              <span class="picker-name">Controles e Documentação</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-15',this)">
+              <span class="picker-number">15</span>
+              <span class="picker-name">Responsabilidades</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-16',this)">
+              <span class="picker-number">16</span>
+              <span class="picker-name">Governança e Revisão</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-17',this)">
+              <span class="picker-number">17</span>
+              <span class="picker-name">Disposições Finais</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-anexo-1',this)">
+              <span class="picker-number">Anexo I</span>
+              <span class="picker-name">Relatório de Apuração</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-anexo-2',this)">
+              <span class="picker-number">Anexo II</span>
+              <span class="picker-name">Ficha Interna de Deliberação</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-anexo-3',this)">
+              <span class="picker-number">Anexo III</span>
+              <span class="picker-name">Termo de Aprovação da Diretoria</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-anexo-4',this)">
+              <span class="picker-number">Anexo IV</span>
+              <span class="picker-name">Termo Individual de Reconhecimento</span>
+              <span class="picker-arrow">→</span>
+            </button><button type="button" class="picker-item" onclick="goPolicy('beneficio-referencias',this)">
+              <span class="picker-number">Ref.</span>
+              <span class="picker-name">Referências Legais e Fiscais</span>
+              <span class="picker-arrow">→</span>
+            </button>
+  </div>
+</details>
+
+
+<p>1. Objetivo</p>
+<p>2. Fundamentação legal e fiscal</p>
+<p>3. Natureza e requisitos essenciais do prêmio</p>
+<p>4. Desempenho ordinariamente esperado</p>
+<p>5. Caracterização do desempenho extraordinário</p>
+<p>6. Critérios de análise</p>
+<p>7. Condutas e modelos vedados</p>
+<p>8. Apuração do resultado</p>
+<p>9. Deliberação e definição do valor</p>
+<p>10. Participação coletiva e individualização</p>
+<p>11. Aprovação</p>
+<p>12. Pagamento e tratamento tributário</p>
+<p>13. Não automaticidade e ausência de direito adquirido</p>
+<p>14. Controles e documentação</p>
+<p>15. Responsabilidades</p>
+<p>16. Governança e revisão</p>
+<p>17. Disposições finais</p>
+<h2>Anexo I – Relatório de Apuração</h2>
+<h2 id="beneficio-anexo-2" class="policy-anchor">ANEXO II – FICHA INTERNA DE DELIBERAÇÃO DO PRÊMIO</h2>
+<h2 id="beneficio-anexo-3" class="policy-anchor">ANEXO III – TERMO DE APROVAÇÃO DA DIRETORIA</h2>
+<h2>Anexo IV – Termo Individual de Reconhecimento</h2>
+<h2 id="beneficio-referencias" class="policy-anchor">REFERÊNCIAS LEGAIS E FISCAIS</h2>
+<h2 id="beneficio-1" class="policy-anchor">1. OBJETIVO</h2>
+<p>Esta Política estabelece parâmetros internos para eventual concessão de Prêmio por Desempenho Extraordinário a empregados da Mais Hidro Soluções, com a finalidade de reconhecer, por liberalidade da empresa, resultados comprovadamente superiores ao desempenho ordinariamente esperado no exercício de suas atividades.</p>
+<p>A Política não cria programa de remuneração variável, comissão, gratificação contratual, participação automática em economias, faturamento, margem, produtividade ou qualquer outra verba devida pela execução normal do trabalho.</p>
+<h2 id="beneficio-2" class="policy-anchor">2. FUNDAMENTAÇÃO LEGAL E FISCAL</h2>
+<p>A Política observa, especialmente, o art. 457, §§ 2º e 4º, da Consolidação das Leis do Trabalho (CLT), os arts. 22 e 28 da Lei nº 8.212/1991, o art. 34, inciso V, alínea “l”, da Instrução Normativa RFB nº 2.110/2022, e as orientações fiscais consolidadas nas Soluções de Consulta Cosit nº 10, de 30/01/2026, e nº 91, de 23/06/2026.</p>
+<div class="table-wrap"><table><tr><th><strong>Diretriz central — </strong>a denominação interna do pagamento não prevalece sobre os fatos. Para ser tratado como prêmio, a concessão deve preservar a liberalidade do empregador e estar vinculada a desempenho objetivamente superior ao ordinariamente esperado.</th></tr></table></div>
+<h2 id="beneficio-3" class="policy-anchor">3. NATUREZA E REQUISITOS ESSENCIAIS DO PRÊMIO</h2>
+<p>O Prêmio por Desempenho Extraordinário tem natureza de reconhecimento eventual, concedido por decisão discricionária da empresa após análise do caso concreto. Para fins desta Política, deverão coexistir os seguintes requisitos:</p>
+<p>beneficiário empregado da empresa, individualmente ou em grupo;</p>
+<p>resultado ou conduta profissional vinculada a desempenho superior ao ordinariamente esperado;</p>
+<p>comprovação objetiva do parâmetro ordinário e da superação obtida;</p>
+<p>ausência de obrigação legal, contratual, coletiva ou ajuste prévio que assegure o pagamento;</p>
+<p>ausência de fórmula automática que transforme o resultado em direito previamente quantificável;</p>
+<p>decisão expressa da Diretoria, tomada após a apuração do fato gerador do reconhecimento;</p>
+<p>registro documental suficiente para demonstrar a excepcionalidade e a coerência do pagamento.</p>
+<p>O prêmio não substitui salário, comissão, gratificação, hora extra, adicional, verba de produtividade ordinária ou qualquer parcela que seja devida ao empregado por lei, contrato, norma coletiva, regulamento obrigatório ou prática que tenha adquirido natureza remuneratória.</p>
+<h2 id="beneficio-4" class="policy-anchor">4. DESEMPENHO ORDINARIAMENTE ESPERADO</h2>
+<p>Considera-se desempenho ordinariamente esperado o resultado correspondente às atribuições normais do cargo, às responsabilidades habituais, aos padrões regulares de produtividade, qualidade, custos, prazos, segurança, faturamento, margem, execução técnica e demais indicadores normalmente exigidos do empregado ou da equipe.</p>
+<p>O parâmetro ordinário deve ser identificável e, sempre que possível, preexistente ao resultado extraordinário. Poderão ser utilizados orçamento aprovado, custo previsto, prazo contratual, produtividade histórica, média de resultados, padrão técnico, índice de retrabalho, margem esperada, indicador de qualidade ou outra referência objetiva e verificável.</p>
+<p>Metas regulares de vendas, produção, prazo, custo ou produtividade integram o desempenho ordinário quando representarem expectativa normal da função. A mera superação de uma meta regular, sem demonstração adicional da excepcionalidade, não gera direito nem caracteriza automaticamente prêmio.</p>
+<h2 id="beneficio-5" class="policy-anchor">5. CARACTERIZAÇÃO DO DESEMPENHO EXTRAORDINÁRIO</h2>
+<p>Poderá ser considerado extraordinário o resultado significativamente superior ao parâmetro ordinário, desde que a diferença seja comprovável e decorra de contribuição relevante do empregado ou da equipe. Exemplos de situações passíveis de análise:</p>
+<h2>5.1 Redução extraordinária de custos</h2>
+<p>economia substancial além do patamar normalmente previsto, sem redução indevida de qualidade, escopo, segurança ou conformidade.</p>
+<h2>5.2 Superação excepcional de referência</h2>
+<p>resultado muito superior ao parâmetro regular, desde que a superação não decorra simplesmente de uma fórmula previamente prometida do tipo “atingiu X = recebe Y”.</p>
+<h2>5.3 Ganho excepcional de eficiência</h2>
+<p>melhoria implementada que produza redução relevante de tempo, desperdício, retrabalho ou custo, ou aumento expressivo de produtividade.</p>
+<h2>5.4 Solução de problema não rotineiro</h2>
+<p>atuação que evite perda relevante, paralisação, atraso crítico, retrabalho significativo ou impacto operacional anormal.</p>
+<h2>5.5 Resultado excepcional em projeto ou obra</h2>
+<p>resultado econômico, técnico ou operacional comprovadamente superior ao cenário ordinário previamente registrado.</p>
+<h2>5.6 Inovação ou melhoria implantada</h2>
+<p>iniciativa que produza benefício mensurável e não se confunda com obrigação normal já remunerada pelo cargo.</p>
+<h2 id="beneficio-6" class="policy-anchor">6. CRITÉRIOS DE ANÁLISE</h2>
+<p>parâmetro ordinário aplicável;</p>
+<p>resultado efetivamente alcançado;</p>
+<p>magnitude e relevância da superação;</p>
+<p>nexo entre a atuação do empregado ou equipe e o resultado;</p>
+<p>caráter não rotineiro ou excepcional da contribuição;</p>
+<p>benefício econômico, operacional, técnico, produtivo ou estratégico;</p>
+<p>ausência de obrigação previamente assumida pela empresa quanto ao pagamento ou ao valor.</p>
+<p>Nenhum critério isolado garante a concessão. A análise deverá considerar o conjunto dos fatos e documentos.</p>
+<h2 id="beneficio-7" class="policy-anchor">7. CONDUTAS E MODELOS VEDADOS</h2>
+<p>Para preservar a natureza jurídica do prêmio e reduzir risco de requalificação como salário, comissão, gratificação ou remuneração variável, ficam vedados, no âmbito desta Política:</p>
+<p>prometer previamente pagamento certo pela simples realização de meta ordinária;</p>
+<p>utilizar fórmula permanente do tipo “bateu X = recebe Y”;</p>
+<p>vincular automaticamente o prêmio a percentual fixo de vendas, faturamento, economia, margem, lucro, CPMV, produção ou qualquer indicador recorrente;</p>
+<p>estabelecer percentual fixo de rateio por cargo, salário, função, setor ou nível hierárquico;</p>
+<p>divulgar tabelas que permitam ao empregado calcular antecipadamente o valor a receber;</p>
+<p>estabelecer periodicidade obrigatória ou calendário que transforme a premiação em parcela esperada;</p>
+<p>utilizar o prêmio para substituir comissão, reajuste salarial, hora extra, adicional, gratificação ou verba contratualmente devida;</p>
+<p>incluir obrigação de pagamento de prêmio em contrato individual, aditivo, acordo coletivo, convenção coletiva, carta-proposta ou comunicação que assegure direito automático.</p>
+<div class="table-wrap"><table><tr><th><strong>Exemplo de risco elevado — </strong>“economia acima de R$ X gera 30% para a equipe” ou “vendeu acima da meta e recebe 2% do excedente”. Esses modelos criam previsibilidade e obrigação econômica incompatíveis com a liberalidade que esta Política pretende preservar.</th></tr></table></div>
+<h2 id="beneficio-8" class="policy-anchor">8. APURAÇÃO DO RESULTADO</h2>
+<p>Cada proposta de premiação deverá ser instruída com Relatório de Apuração de Desempenho Extraordinário, contendo, no mínimo:</p>
+<p>identificação do projeto, obra, atividade ou evento;</p>
+<p>período analisado;</p>
+<p>empregados envolvidos;</p>
+<p>parâmetro ordinariamente esperado e respectiva fonte;</p>
+<p>resultado efetivamente alcançado;</p>
+<p>diferença quantitativa ou qualitativa apurada;</p>
+<p>evidências e documentos de suporte;</p>
+<p>descrição da contribuição dos empregados;</p>
+<p>benefício gerado para a empresa;</p>
+<p>justificativa de porque a situação excede o desempenho normal.</p>
+<p>Planilhas, DRE, orçamentos, controles de custo, cronogramas, relatórios técnicos, indicadores, registros operacionais e demais evidências deverão ser anexados quando aplicáveis.</p>
+<h2 id="beneficio-9" class="policy-anchor">9. DELIBERAÇÃO E DEFINIÇÃO DO VALOR</h2>
+<p>A existência de desempenho extraordinário não gera, por si só, obrigação de pagamento. Concluída a apuração, a Diretoria poderá, por liberalidade, decidir pela concessão ou não do prêmio.</p>
+<p>Se houver concessão, o valor será definido após a ocorrência e a comprovação do resultado, considerando a relevância do fato, a contribuição efetiva, o impacto para a empresa, a disponibilidade financeira e outros elementos do caso concreto.</p>
+<p>Não haverá percentual, faixa, peso, múltiplo salarial ou fórmula previamente garantida. Eventuais cálculos, simulações ou referências utilizadas pela Diretoria serão instrumentos internos de deliberação e não constituem direito, promessa ou parâmetro obrigatório para casos futuros.</p>
+<h2 id="beneficio-10" class="policy-anchor">10. PARTICIPAÇÃO COLETIVA E INDIVIDUALIZAÇÃO</h2>
+<p>Quando o resultado decorrer de atuação coletiva, a Diretoria poderá conceder valores distintos aos participantes conforme a contribuição efetivamente demonstrada, sem utilização de rateio permanente por cargo, salário, setor ou função.</p>
+<p>A individualização deverá ser justificada no processo interno, considerando elementos como participação efetiva, responsabilidade assumida, contribuição técnica ou administrativa, complexidade, impacto das decisões e tempo de atuação no evento específico. Esses elementos não constituem pesos fixos e não geram equivalência obrigatória entre casos.</p>
+<h2 id="beneficio-11" class="policy-anchor">11. APROVAÇÃO</h2>
+<p>Nenhum pagamento será realizado exclusivamente por indicação informal. A concessão deverá seguir, no mínimo, as seguintes etapas:</p>
+<p>apuração do resultado e organização das evidências;</p>
+<p>análise da excepcionalidade;</p>
+<p>identificação dos empregados participantes;</p>
+<p>análise administrativa e financeira;</p>
+<p>deliberação discricionária da Diretoria quanto à concessão e ao valor;</p>
+<p>validação da rubrica e incidências pela Contabilidade/Folha;</p>
+<p>aprovação formal;</p>
+<p>registro e arquivamento do pagamento.</p>
+<h2 id="beneficio-12" class="policy-anchor">12. PAGAMENTO E TRATAMENTO TRIBUTÁRIO</h2>
+<p>Após aprovação, o pagamento será identificado internamente em rubrica própria de prêmio por desempenho extraordinário, vinculado ao respectivo processo de apuração e aprovação.</p>
+<p>Mantidos os requisitos legais que caracterizam o prêmio previsto no art. 457, §§ 2º e 4º, da CLT, a parcela não integra a remuneração nem a base dos encargos trabalhistas e previdenciários abrangidos pela legislação aplicável. A classificação deverá, contudo, refletir os fatos efetivamente ocorridos; a simples nomenclatura “prêmio” não é suficiente.</p>
+<p>O pagamento permanece sujeito ao Imposto sobre a Renda quando aplicável. A Contabilidade/Folha deverá observar a legislação vigente, o mês do efetivo pagamento e as demais parcelas tributáveis pagas ao empregado no período, aplicando as retenções e obrigações acessórias pertinentes.</p>
+<h2 id="beneficio-13" class="policy-anchor">13. NÃO AUTOMATICIDADE E AUSÊNCIA DE DIREITO ADQUIRIDO</h2>
+<p>Esta Política não garante pagamento, frequência, valor mínimo, percentual, método de rateio ou repetição futura. Cada evento será avaliado de forma autônoma e somente após a comprovação do resultado extraordinário.</p>
+<p>O pagamento em um ou mais períodos não dispensa nova análise nem autoriza o empregado a presumir que haverá nova concessão. Caso a prática empresarial passe a operar de forma automática, previsível ou vinculada ao trabalho ordinário, o modelo deverá ser interrompido e reavaliado antes de novos pagamentos.</p>
+<h2 id="beneficio-14" class="policy-anchor">14. CONTROLES E DOCUMENTAÇÃO</h2>
+<p>Política vigente;</p>
+<p>Relatório de Apuração;</p>
+<p>documentos que comprovem o parâmetro ordinário;</p>
+<p>documentos que comprovem o resultado e a superação;</p>
+<p>identificação e contribuição dos participantes;</p>
+<p>Ficha Interna de Deliberação do Prêmio;</p>
+<p>Termo de Aprovação da Diretoria;</p>
+<p>validação da Contabilidade/Folha;</p>
+<p>comprovante de pagamento;</p>
+<p>Termo Individual de Reconhecimento, quando utilizado.</p>
+<p>Os registros de deliberação financeira são de uso interno e não constituem tabela de direitos nem política de remuneração variável.</p>
+<h2 id="beneficio-15" class="policy-anchor">15. RESPONSABILIDADES</h2>
+<div class="table-wrap"><table><tr><th><strong>Responsável</strong></th><th><strong>Atribuição</strong></th></tr><tr><td>Gestor / Área solicitante</td><td>Apresentar os fatos, o parâmetro ordinário, os resultados, as evidências e a participação dos empregados.</td></tr><tr><td>Administrativo / Financeiro</td><td>Conferir a documentação, a consistência da apuração, a disponibilidade financeira e a completude do dossiê.</td></tr><tr><td>Diretoria</td><td>Decidir discricionariamente sobre a existência de desempenho extraordinário, a concessão e o valor, sem fórmula obrigatória.</td></tr><tr><td>Contabilidade / Folha</td><td>Validar rubrica, incidências, retenções e obrigações acessórias antes do pagamento.</td></tr><tr><td>Empregado beneficiário</td><td>Quando solicitado, assinar termo de ciência e recebimento referente exclusivamente ao evento aprovado.</td></tr></table></div>
+<h2 id="beneficio-16" class="policy-anchor">16. GOVERNANÇA E REVISÃO</h2>
+<p>A Política deverá ser revisada sempre que houver alteração legal, fiscal, trabalhista, contábil ou mudança relevante na orientação administrativa ou judicial aplicável. A empresa deverá também revisar o modelo se a prática de pagamentos passar a apresentar recorrência, previsibilidade ou critérios que possam aproximá-lo de comissão, bônus contratual ou remuneração variável.</p>
+<p>Campanhas comerciais, programas de metas, planos de comissão, participação nos lucros e resultados ou outros incentivos com regras próprias não deverão ser enquadrados automaticamente nesta Política e exigirão tratamento jurídico, trabalhista, tributário e documental adequado à respectiva natureza.</p>
+<h2 id="beneficio-17" class="policy-anchor">17. DISPOSIÇÕES FINAIS</h2>
+<p>Casos omissos serão submetidos à Diretoria, com validação da Contabilidade/Folha e, quando houver dúvida jurídica material, da assessoria jurídica trabalhista e tributária.</p>
+<p>Em eventual divergência entre a nomenclatura interna e a realidade do pagamento, deverá prevalecer a classificação jurídica correspondente aos fatos efetivamente verificados.</p>
+<p>Esta versão substitui a Versão 00/2026 após sua aprovação formal.</p>
+<h2>APROVAÇÃO DA POLÍTICA</h2>
+<div class="table-wrap"><table><tr><th><br><br>Ivan de Castro Alves Filho</th><th><br><br>Dariane Ferreira</th></tr><tr><td>Diretoria</td><td>Administrativo / Financeiro</td></tr></table></div>
+<h2 id="beneficio-anexo-1" class="policy-anchor">ANEXO I – RELATÓRIO DE APURAÇÃO DE DESEMPENHO EXTRAORDINÁRIO</h2>
+<div class="table-wrap"><table><tr><th>Projeto / Obra / Atividade</th><th></th></tr><tr><td>Período de apuração</td><td></td></tr><tr><td>Área(s) envolvida(s)</td><td></td></tr><tr><td>Responsável pela apuração</td><td></td></tr></table></div>
+<h2>1. PARÂMETRO ORDINARIAMENTE ESPERADO</h2>
+<p>Descrever o resultado normal esperado e indicar sua fonte objetiva.</p>
+<h2>2. RESULTADO EFETIVAMENTE ALCANÇADO</h2>
+<p>Descrever o resultado final e os documentos comprobatórios.</p>
+<h2>3. SUPERAÇÃO APURADA</h2>
+<p>Demonstrar o quanto o resultado superou o parâmetro ordinário.</p>
+<h2>4. BENEFÍCIO GERADO PARA A EMPRESA</h2>
+<p>Descrever o benefício econômico, técnico, operacional ou estratégico.</p>
+<h2>5. JUSTIFICATIVA DA EXCEPCIONALIDADE</h2>
+<p>Explicar por que o resultado não corresponde apenas à execução normal das atribuições.</p>
+<h2>6. CONTRIBUIÇÃO DOS EMPREGADOS</h2>
+<p>Descrever individualmente ou por equipe a participação relevante no resultado.</p>
+<h2>7. DOCUMENTOS COMPROBATÓRIOS</h2>
+<p>☐ Orçamento / custo previsto    ☐ Planilha de apuração    ☐ DRE / relatório financeiro<br>☐ Relatório técnico / operacional    ☐ Indicadores / controles internos    ☐ Outros: __________________________</p>
+<h2>8. CONCLUSÃO DA APURAÇÃO</h2>
+<p>☐ Caracterizado desempenho superior ao ordinariamente esperado     ☐ Não caracterizado</p>
+<p><br>________________________________________        ________________________________________<br>Responsável pela apuração                                            Conferência Administrativo / Financeiro</p>
+<h2>ANEXO II – FICHA INTERNA DE DELIBERAÇÃO DO PRÊMIO</h2>
+<div class="table-wrap"><table><tr><th><strong>Uso restrito — </strong>este anexo documenta uma decisão posterior ao resultado. Não deve ser utilizado como tabela de promessa, campanha, percentual fixo ou fórmula de direito futuro.</th></tr></table></div>
+<div class="table-wrap"><table><tr><th>Evento / Projeto / Obra</th><th></th></tr><tr><td>Resultado extraordinário reconhecido</td><td></td></tr><tr><td>Empregado(s) considerado(s)</td><td></td></tr><tr><td>Valor total proposto</td><td>R$ __________________________</td></tr><tr><td>Valor total aprovado</td><td>R$ __________________________</td></tr><tr><td>Data da deliberação</td><td>____/____/________</td></tr></table></div>
+<h2>FUNDAMENTOS DA DECISÃO SOBRE O VALOR</h2>
+<p>Registrar, em texto, os elementos considerados pela Diretoria, sem criação de fórmula obrigatória: relevância do resultado, magnitude do benefício, contribuição efetiva, complexidade, impacto e disponibilidade financeira.</p>
+<h2>INDIVIDUALIZAÇÃO, SE APLICÁVEL</h2>
+<div class="table-wrap"><table><tr><th><strong>Empregado</strong></th><th><strong>Justificativa da contribuição</strong></th><th><strong>Valor aprovado (R$)</strong></th></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table></div>
+<p>Declaração: os valores acima foram definidos exclusivamente para o evento analisado, após sua apuração, e não constituem percentual, faixa, peso, múltiplo ou critério obrigatório para qualquer premiação futura.</p>
+<h2>ANEXO III – TERMO DE APROVAÇÃO DA DIRETORIA</h2>
+<div class="table-wrap"><table><tr><th>Projeto / Obra / Atividade</th><th></th></tr><tr><td>Período</td><td></td></tr><tr><td>Resultado extraordinário reconhecido</td><td></td></tr><tr><td>Valor total aprovado</td><td>R$ __________________________</td></tr><tr><td>Data prevista para pagamento</td><td>____/____/________</td></tr></table></div>
+<h2>DECLARAÇÃO DA DECISÃO</h2>
+<p>Após análise do Relatório de Apuração e das evidências, a Diretoria reconhece, exclusivamente para o evento identificado, a existência de desempenho superior ao ordinariamente esperado e, por liberalidade da empresa, delibera sobre a concessão do prêmio no valor acima indicado. A decisão foi tomada após a ocorrência do resultado e não decorre de fórmula, percentual ou obrigação previamente assegurada.</p>
+<p>A presente aprovação não cria obrigação de repetição, não altera salário ou condições contratuais e permanece condicionada à validação da classificação e do processamento pela Contabilidade/Folha.</p>
+<p>Decisão: ☐ APROVADO    ☐ APROVADO COM AJUSTES    ☐ NÃO APROVADO</p>
+<p><br>________________________________________        ________________________________________<br>Diretoria                                                     Administrativo / Financeiro</p>
+<h2 id="beneficio-anexo-4" class="policy-anchor">ANEXO IV – TERMO INDIVIDUAL DE RECONHECIMENTO DE PRÊMIO</h2>
+<div class="table-wrap"><table><tr><th>Empregado</th><th></th></tr><tr><td>Cargo / Função</td><td></td></tr><tr><td>CPF</td><td></td></tr><tr><td>Projeto / Obra / Atividade</td><td></td></tr><tr><td>Período de referência</td><td></td></tr><tr><td>Valor bruto do prêmio</td><td>R$ __________________________</td></tr></table></div>
+<p>A Mais Hidro Soluções registra que o empregado acima identificado participou de resultado reconhecido, após apuração e deliberação da Diretoria, como superior ao ordinariamente esperado no evento indicado.</p>
+<p>Em razão desse resultado específico, a empresa concede, por liberalidade, o presente prêmio. O pagamento não decorre de promessa anterior, não constitui percentual sobre vendas, economia, faturamento, lucro ou outro indicador, não substitui salário, comissão ou verba devida pelo trabalho ordinário e não assegura premiação futura.</p>
+<p>O empregado declara ciência da origem e finalidade do pagamento e confirma o recebimento do valor líquido indicado no comprovante/folha correspondente, sem que esta declaração represente renúncia a direitos indisponíveis previstos em lei.</p>
+<p>Caucaia/CE, ____ de ______________________________ de ________.</p>
+<p><br>________________________________________        ________________________________________<br>Empregado                                                     Representante da empresa</p>
+<h2>REFERÊNCIAS LEGAIS E FISCAIS</h2>
+<div class="table-wrap"><table><tr><th><strong>Fonte</strong></th><th><strong>Aplicação ao documento</strong></th></tr><tr><td>CLT – Decreto-Lei nº 5.452/1943</td><td>Art. 457, §§ 1º, 2º e 4º; art. 9º. Diferencia salário/comissões de prêmio e exige aderência à realidade dos fatos.</td></tr><tr><td>Lei nº 8.212/1991</td><td>Arts. 22 e 28. Base legal previdenciária considerada nas orientações da Receita Federal sobre prêmios.</td></tr><tr><td>Lei nº 8.036/1990</td><td>Art. 15. FGTS incide sobre remuneração, observada a natureza jurídica efetiva da parcela.</td></tr><tr><td>IN RFB nº 2.110/2022</td><td>Art. 34, inciso V, alínea “l”, conforme citado pelas Soluções de Consulta sobre prêmios.</td></tr><tr><td>Solução de Consulta Cosit nº 10/2026</td><td>Consolida condições fiscais para exclusão previdenciária do prêmio por desempenho superior.</td></tr><tr><td>Solução de Consulta Cosit nº 91/2026</td><td>Reitera os quatro requisitos: empregado; bens/serviços/dinheiro; ausência de obrigação/ajuste que descaracterize liberalidade; e comprovação objetiva da superação do desempenho ordinário.</td></tr><tr><td>Lei nº 7.713/1988 e legislação do IRRF</td><td>O imposto de renda da pessoa física é apurado conforme os rendimentos percebidos e regras aplicáveis no período do pagamento.</td></tr></table></div>
+<h2>NOTA DE USO</h2>
+<p>Esta Política é instrumento de governança interna. Sua aplicação deve refletir a realidade de cada pagamento. Antes da implantação, recomenda-se validação final pela assessoria jurídica da empresa e pela Contabilidade/Folha, especialmente se existirem campanhas, metas, percentuais, compromissos prévios ou práticas históricas de pagamento que possam alterar o enquadramento jurídico.</p></div>
+    </article>
+  </div>
+</section>
+
+<script>
+function openDoc(id){
+  document.getElementById('home').style.display='none';
+  document.querySelectorAll('.doc-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  history.replaceState(null,'','#'+id);
+}
+function goHome(){
+  document.querySelectorAll('.doc-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('home').style.display='block';
+  window.scrollTo({top:0,behavior:'instant'});
+  history.replaceState(null,'',location.pathname+location.search);
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  const id=location.hash.replace('#','');
+  if(['politicas','dayoff','beneficios'].includes(id)) openDoc(id);
+});
+
+function goPolicy(id,button){
+  const target=document.getElementById(id);
+  const picker=button ? button.closest('.policy-picker') : null;
+  if(!target || !picker) return;
+
+  picker.querySelectorAll('.picker-item').forEach(b=>b.classList.remove('active'));
+  button.classList.add('active');
+
+  const number=button.querySelector('.picker-number')?.textContent.trim() || '';
+  const name=button.querySelector('.picker-name')?.textContent.trim() || target.textContent.trim();
+
+  openPolicyInsidePicker(picker,id,number,name);
+}
+
+
+
+
+
+
+function cleanPolicyClone(node){
+  const clone=node.cloneNode(true);
+
+  if(clone.removeAttribute){
+    clone.removeAttribute('id');
+    clone.classList.remove('policy-source-hidden');
+  }
+
+  clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+  clone.querySelectorAll('.policy-source-hidden').forEach(el=>el.classList.remove('policy-source-hidden'));
+
+  // Remove controles de edição caso tenham sido clonados por acidente.
+  clone.querySelectorAll('.picker-actions,.picker-add-row,.manage-hint').forEach(el=>el.remove());
+
+  return clone;
+}
+
+function openPolicyInsidePicker(picker,targetId,number,name){
+  const list=picker.querySelector('.picker-list');
+  if(!list) return;
+
+  let view=picker.querySelector('.picker-selected-view');
+  if(!view){
+    view=document.createElement('div');
+    view.className='picker-selected-view';
+    picker.appendChild(view);
+  }
+
+  const nodes=sectionNodes(targetId);
+  if(!nodes.length) return;
+
+  view.innerHTML='';
+
+  const top=document.createElement('div');
+  top.className='picker-selected-top';
+
+  const back=document.createElement('button');
+  back.type='button';
+  back.className='picker-back-list';
+  back.innerHTML='<span>←</span> Todas as políticas';
+  back.addEventListener('click',()=>{
+    showPickerList(picker);
+  });
+
+  const title=document.createElement('div');
+  title.className='picker-selected-title';
+  title.innerHTML='<span class="picker-selected-number"></span><div><strong></strong><small>Conteúdo completo</small></div>';
+  title.querySelector('.picker-selected-number').textContent=number || '•';
+  title.querySelector('strong').textContent=name;
+
+  const printBtn=document.createElement('button');
+  printBtn.type='button';
+  printBtn.className='picker-print-btn';
+  printBtn.title='Imprimir esta política';
+  printBtn.setAttribute('aria-label','Imprimir esta política');
+  printBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>';
+  printBtn.addEventListener('click',()=>{
+    printCurrentPolicyNative(picker,targetId,number,name);
+  });
+
+  const topActions=document.createElement('div');
+  topActions.className='picker-selected-actions';
+  topActions.append(title,printBtn);
+
+  top.append(back,topActions);
+
+  const content=document.createElement('div');
+  content.className='picker-selected-content';
+
+  nodes.forEach(node=>{
+    const clone=cleanPolicyClone(node);
+    content.appendChild(clone);
+  });
+
+  view.append(top,content);
+
+  list.style.display='none';
+  const pager=picker.querySelector('.picker-pagination');
+  if(pager) pager.style.display='none';
+  view.style.display='block';
+  picker.classList.add('policy-open');
+  picker.open=true;
+
+  // O usuário permanece no mesmo ponto da tela.
+  picker.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showPickerList(picker){
+  const list=picker.querySelector('.picker-list');
+  const view=picker.querySelector('.picker-selected-view');
+  if(list) list.style.display='grid';
+  const pager=picker.querySelector('.picker-pagination');
+  if(pager) pager.style.display='grid';
+  if(view) view.style.display='none';
+  picker.classList.remove('policy-open');
+  picker.querySelectorAll('.picker-item').forEach(b=>b.classList.remove('active'));
+  picker.open=true;
+  ensurePickerPagination(picker);
+  picker.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function hideOriginalPolicySections(){
+  document.querySelectorAll('.policy-picker').forEach(picker=>{
+    picker.querySelectorAll('.picker-item').forEach(item=>{
+      const target=getPickerTarget(item);
+      if(!target) return;
+      sectionNodes(target).forEach(node=>node.classList.add('policy-source-hidden'));
+    });
+  });
+}
+
+
+let editorToastTimer=null;
+function showEditorToast(message){
+  const toast=document.getElementById('editorToast');
+  if(!toast) return;
+  toast.textContent=message;
+  toast.classList.add('show');
+  clearTimeout(editorToastTimer);
+  editorToastTimer=setTimeout(()=>toast.classList.remove('show'),2200);
+}
+
+
+const PICKER_PAGE_SIZE=6;
+
+function getVisiblePickerItems(picker){
+  return [...picker.querySelectorAll('.picker-list > .picker-item')]
+    .filter(item=>!item.dataset.deleted);
+}
+
+function getPickerPageCount(picker){
+  const items=getVisiblePickerItems(picker);
+  return Math.max(1,Math.ceil(items.length/PICKER_PAGE_SIZE));
+}
+
+function applyPickerPage(picker){
+  const items=getVisiblePickerItems(picker);
+  const totalPages=getPickerPageCount(picker);
+
+  let current=parseInt(picker.dataset.currentPage || '1',10);
+  if(!Number.isFinite(current)) current=1;
+  current=Math.min(Math.max(current,1),totalPages);
+  picker.dataset.currentPage=String(current);
+
+  const start=(current-1)*PICKER_PAGE_SIZE;
+  const end=start+PICKER_PAGE_SIZE;
+
+  items.forEach((item,index)=>{
+    item.classList.toggle('page-hidden', index < start || index >= end);
+  });
+
+  const pagination=picker.querySelector('.picker-pagination');
+  if(!pagination) return;
+
+  const prev=pagination.querySelector('[data-page-action="prev"]');
+  const next=pagination.querySelector('[data-page-action="next"]');
+  const info=pagination.querySelector('.picker-page-info');
+
+  if(prev) prev.disabled=current<=1;
+  if(next) next.disabled=current>=totalPages;
+
+  if(info){
+    const first=items.length ? start+1 : 0;
+    const last=Math.min(end,items.length);
+    info.textContent=items.length
+      ? `Mostrando ${first}–${last} de ${items.length}`
+      : 'Nenhuma política';
+  }
+}
+
+function setPickerPage(picker,pageNumber){
+  const totalPages=getPickerPageCount(picker);
+  const nextPage=Math.min(Math.max(Number(pageNumber)||1,1),totalPages);
+  picker.dataset.currentPage=String(nextPage);
+  applyPickerPage(picker);
+}
+
+function ensurePickerPagination(picker){
+  const list=picker.querySelector('.picker-list');
+  if(!list) return;
+
+  list.classList.add('paged-list');
+
+  let pagination=picker.querySelector('.picker-pagination');
+  if(!pagination){
+    pagination=document.createElement('div');
+    pagination.className='picker-pagination';
+    pagination.innerHTML=`
+      <button type="button" class="picker-nav-btn" data-page-action="prev">
+        ← <span>Anteriores</span>
+      </button>
+      <span class="picker-page-info"></span>
+      <button type="button" class="picker-nav-btn next" data-page-action="next">
+        <span>Próximas políticas</span> →
+      </button>
+    `;
+    list.insertAdjacentElement('afterend',pagination);
+
+    const prev=pagination.querySelector('[data-page-action="prev"]');
+    const next=pagination.querySelector('[data-page-action="next"]');
+
+    prev.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const current=parseInt(picker.dataset.currentPage || '1',10) || 1;
+      setPickerPage(picker,current-1);
+    });
+
+    next.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const current=parseInt(picker.dataset.currentPage || '1',10) || 1;
+      setPickerPage(picker,current+1);
+    });
+  }
+
+  applyPickerPage(picker);
+}
+
+function refreshAllPickerPagination(){
+  document.querySelectorAll('.policy-picker').forEach(picker=>{
+    ensurePickerPagination(picker);
+  });
+}
+
+
+let pendingPrintPicker=null;
+
+function openPrintDialog(picker,number,name){
+  pendingPrintPicker=picker;
+
+  const modal=document.getElementById('printModal');
+  const policy=document.getElementById('printPolicyName');
+  const numberEl=document.getElementById('printPolicyNumber');
+
+  if(!modal || !policy || !numberEl) return;
+
+  numberEl.textContent=number || '•';
+  policy.textContent=name || 'Política selecionada';
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+}
+
+function closePrintDialog(){
+  const modal=document.getElementById('printModal');
+  if(modal){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+  }
+}
+
+function confirmPrintPolicy(){
+  if(!pendingPrintPicker) return;
+
+  const picker=pendingPrintPicker;
+
+  // Prepara somente a política selecionada para impressão.
+  picker.classList.add('print-target');
+
+  // Fecha a confirmação antes de abrir a caixa nativa do navegador.
+  const modal=document.getElementById('printModal');
+  if(modal){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+  }
+
+  const cleanup=()=>{
+    picker.classList.remove('print-target');
+    pendingPrintPicker=null;
+  };
+
+  window.addEventListener('afterprint',cleanup,{once:true});
+
+  // Chamada síncrona: preserva a ativação do clique e abre a caixa
+  // padrão de impressão do navegador (equivalente ao Ctrl+P).
+  try{
+    window.focus();
+    window.print();
+  }catch(e){
+    cleanup();
+    alert('Não foi possível abrir a janela de impressão. Use Ctrl+P.');
+  }
+}
+
+
+
+
+function printCurrentPolicyNative(picker,targetId,number,name){
+  if(window.MHS_ROLE!=='admin') return;
+  const isInternalPolicies = picker.closest('.doc-view')?.id === 'view-politicas';
+  const items=[...picker.querySelectorAll('.picker-list > .picker-item')]
+    .map(item=>{
+      const target=getPickerTarget(item);
+      if(!target) return null;
+      return {
+        target,
+        number:item.querySelector('.picker-number')?.textContent.trim() || '',
+        name:item.querySelector('.picker-name')?.textContent.trim() || 'Política'
+      };
+    })
+    .filter(Boolean);
+
+  if(!items.length){
+    alert('Não foi possível localizar as políticas para impressão.');
+    return;
+  }
+
+  const printWindow=window.open('', '_blank', 'width=1100,height=780');
+  if(!printWindow){
+    alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este arquivo e tente novamente.');
+    return;
+  }
+
+  const esc=(value)=>String(value || '').replace(/[<>&"]/g,function(ch){
+    return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[ch];
+  });
+
+  const sections=items.map((data,index)=>{
+    const nodes=sectionNodes(data.target);
+    const wrap=document.createElement('div');
+
+    nodes.forEach(node=>{
+      const clone=cleanPolicyClone(node);
+      wrap.appendChild(clone);
+    });
+
+    return `
+      <section class="print-policy">
+        <header class="print-header">
+          <span class="print-number">${esc(data.number)}</span>
+          <div class="print-title">
+            <h1>${esc(data.name)}</h1>
+            <p>Mais Hidro Soluções — Políticas Corporativas</p>
+          </div>
+        </header>
+        <main>${wrap.innerHTML}</main>
+      </section>
+    `;
+  }).join('');
+
+  const doc=`<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Políticas Corporativas</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:#344d69}
+body{font-family:Arial,Helvetica,sans-serif;padding:16mm}
+.print-policy{
+  width:100%;
+  margin:0 0 6mm;
+  break-inside:auto;
+  page-break-inside:auto;
+  break-before:auto;
+  page-break-before:auto;
+  break-after:auto;
+  page-break-after:auto;
+}
+.print-policy:last-child{margin-bottom:0}
+.print-header{
+  display:flex;align-items:center;gap:12px;
+  padding-bottom:15px;margin-bottom:18px;
+  border-bottom:1px solid #d8e3ed;
+  break-after:avoid-page;
+  page-break-after:avoid;
+}
+.print-number{
+  min-width:38px;height:38px;padding:0 8px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;background:#eaf6ff;color:#0c3976;
+  font-weight:700;font-size:12px;
+}
+.print-title h1{margin:0;color:#0c3976;font-size:25px;line-height:1.15}
+.print-title p{margin:5px 0 0;color:#667d94;font-size:12px}
+h2{
+  color:#0c3976;font-size:19px;margin:21px 0 9px;
+  break-after:avoid-page;page-break-after:avoid;
+}
+h3{
+  color:#155ca5;font-size:15px;margin:16px 0 7px;
+  break-after:avoid-page;page-break-after:avoid;
+}
+p{
+  font-size:13px;line-height:1.55;color:#344d69;
+  orphans:4;widows:4;
+}
+li{
+  font-size:13px;line-height:1.55;color:#344d69;
+  break-inside:avoid-page;page-break-inside:avoid;
+}
+ul,ol{
+  padding-left:22px;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:12px 0;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+thead{display:table-header-group}
+tfoot{display:table-footer-group}
+th,td{
+  border:1px solid #d8e3ed;
+  padding:8px 9px;
+  text-align:left;
+  vertical-align:top;
+  font-size:12px
+}
+th{background:#f0f8ff;color:#0c3976}
+tr{
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.table-wrap,
+.notice,
+.bullet,
+blockquote{
+  overflow:visible!important;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.print-preface,
+.print-subsection{
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.print-section{
+  break-inside:auto;
+  page-break-inside:auto;
+}
+.print-section + .print-section{
+  margin-top:2mm;
+}
+
+button,.picker-actions,.picker-pagination,.picker-back-list,.picker-print-btn{display:none!important}
+
+/* Ajuste EXCLUSIVO da aba Políticas Internas */
+.internal-policies-print .print-policy{
+  break-inside:auto !important;
+  page-break-inside:auto !important;
+}
+
+/* O bloco inicial não pode terminar antes de "Regras Principais". */
+.internal-policies-print .print-opening-block{
+  break-inside:avoid-page !important;
+  page-break-inside:avoid !important;
+  margin-bottom:0 !important;
+}
+
+/* A lista pode continuar na página seguinte quando for longa. */
+.internal-policies-print .print-rules-block{
+  break-inside:auto !important;
+  page-break-inside:auto !important;
+}
+
+.internal-policies-print .print-rules-block ul,
+.internal-policies-print .print-rules-block ol{
+  break-inside:auto !important;
+  page-break-inside:auto !important;
+}
+
+.internal-policies-print .print-rules-block li{
+  break-inside:avoid-page !important;
+  page-break-inside:avoid !important;
+}
+
+/* Mantém o título "Regras Principais" com pelo menos o início da lista. */
+.internal-policies-print .print-rules-title{
+  break-after:avoid-page !important;
+  page-break-after:avoid !important;
+}
+
+@page{size:auto;margin:14mm}
+@media print{body{padding:0}}
+</style>
+</head>
+<body class="${isInternalPolicies ? 'internal-policies-print' : ''}">
+${sections}
+<script>
+function preparePrintLayout(){
+  document.querySelectorAll('.print-policy main').forEach(function(main){
+    if(main.dataset.printPrepared==='1') return;
+    main.dataset.printPrepared='1';
+
+    const original=[...main.children];
+    main.innerHTML='';
+
+    let section=null;
+    let subsection=null;
+    let preface=null;
+
+    original.forEach(function(el){
+      const tag=(el.tagName||'').toUpperCase();
+
+      if(tag==='H2'){
+        section=document.createElement('section');
+        section.className='print-section';
+        main.appendChild(section);
+        section.appendChild(el);
+        subsection=null;
+        preface=null;
+        return;
+      }
+
+      if(tag==='H3'){
+        if(!section){
+          section=document.createElement('section');
+          section.className='print-section';
+          main.appendChild(section);
+        }
+        subsection=document.createElement('div');
+        subsection.className='print-subsection';
+        section.appendChild(subsection);
+        subsection.appendChild(el);
+        preface=null;
+        return;
+      }
+
+      if(subsection){
+        subsection.appendChild(el);
+      }else if(section){
+        section.appendChild(el);
+      }else{
+        if(!preface){
+          preface=document.createElement('div');
+          preface.className='print-preface';
+          main.appendChild(preface);
+        }
+        preface.appendChild(el);
+      }
+    });
+
+    /* Apenas Políticas Internas:
+       agrupa Título + Objetivo + cabeçalho Regras Principais,
+       mas deixa a lista de regras livre para continuar na folha seguinte. */
+    if(document.body.classList.contains('internal-policies-print')){
+      const children=[...main.children];
+      const firstSection=children.find(el=>el.classList.contains('print-section'));
+
+      if(firstSection){
+        const subs=[...firstSection.children].filter(el=>el.classList.contains('print-subsection'));
+        const objetivo=subs.find(el=>{
+          const h=el.querySelector('h3');
+          return h && h.textContent.trim().toLowerCase()==='objetivo';
+        });
+        const regras=subs.find(el=>{
+          const h=el.querySelector('h3');
+          return h && h.textContent.trim().toLowerCase()==='regras principais';
+        });
+
+        if(objetivo && regras){
+          const opening=document.createElement('div');
+          opening.className='print-opening-block';
+
+          // Move o H2 da política para o bloco inicial.
+          const policyTitle=firstSection.querySelector(':scope > h2');
+          if(policyTitle) opening.appendChild(policyTitle);
+
+          // Move o objetivo completo.
+          opening.appendChild(objetivo);
+
+          // Move apenas o título "Regras Principais" para junto do objetivo.
+          const regrasTitle=regras.querySelector('h3');
+          if(regrasTitle){
+            regrasTitle.classList.add('print-rules-title');
+            opening.appendChild(regrasTitle);
+          }
+
+          regras.classList.add('print-rules-block');
+
+          firstSection.insertBefore(opening, firstSection.firstChild);
+        }
+      }
+    }
+  });
+}
+
+window.addEventListener('load',function(){
+  preparePrintLayout();
+  setTimeout(function(){
+    window.focus();
+    window.print();
+  },220);
+});
+window.addEventListener('afterprint',function(){
+  window.close();
+});
+<\/script>
+
+
+
+</body>
+</html>`;
+
+  printWindow.document.open();
+  printWindow.document.write(doc);
+  printWindow.document.close();
+}
+
+let multiPrintPicker=null;
+
+function getPrintableItems(picker){
+  return [...picker.querySelectorAll('.picker-list > .picker-item')]
+    .map(item=>{
+      const target=getPickerTarget(item);
+      if(!target) return null;
+      return {
+        target,
+        number:item.querySelector('.picker-number')?.textContent.trim() || '',
+        name:item.querySelector('.picker-name')?.textContent.trim() || 'Política'
+      };
+    })
+    .filter(Boolean);
+}
+
+function openMultiPrintDialog(picker,currentTarget){
+  if(window.MHS_ROLE!=='admin') return;
+  multiPrintPicker=picker;
+
+  const modal=document.getElementById('multiPrintModal');
+  const list=document.getElementById('multiPrintList');
+  const count=document.getElementById('multiPrintCount');
+  if(!modal || !list || !count) return;
+
+  list.innerHTML='';
+
+  const items=getPrintableItems(picker);
+
+  items.forEach(data=>{
+    const label=document.createElement('label');
+    label.className='multi-print-item';
+
+    const check=document.createElement('input');
+    check.type='checkbox';
+    check.value=data.target;
+    check.checked=data.target===currentTarget;
+    check.addEventListener('change',updateMultiPrintCount);
+
+    const visual=document.createElement('span');
+    visual.className='multi-print-check';
+
+    const number=document.createElement('span');
+    number.className='multi-print-number';
+    number.textContent=data.number || '•';
+
+    const name=document.createElement('span');
+    name.className='multi-print-name';
+    name.textContent=data.name;
+
+    label.append(check,visual,number,name);
+    list.appendChild(label);
+  });
+
+  updateMultiPrintCount();
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+}
+
+function closeMultiPrintDialog(){
+  const modal=document.getElementById('multiPrintModal');
+  if(modal){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+  }
+  multiPrintPicker=null;
+}
+
+function updateMultiPrintCount(){
+  const checks=[...document.querySelectorAll('#multiPrintList input[type="checkbox"]')];
+  const selected=checks.filter(c=>c.checked).length;
+  const count=document.getElementById('multiPrintCount');
+  const btn=document.getElementById('multiPrintConfirm');
+  if(count) count.textContent=selected===1 ? '1 política selecionada' : `${selected} políticas selecionadas`;
+  if(btn) btn.disabled=selected===0;
+}
+
+function toggleSelectAllPrint(){
+  const checks=[...document.querySelectorAll('#multiPrintList input[type="checkbox"]')];
+  if(!checks.length) return;
+  const shouldCheck=!checks.every(c=>c.checked);
+  checks.forEach(c=>c.checked=shouldCheck);
+  updateMultiPrintCount();
+}
+
+function escapePrintText(value){
+  return String(value || '').replace(/[<>&"]/g,function(ch){
+    return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[ch];
+  });
+}
+
+function getPrintableSectionHtml(target){
+  const nodes=sectionNodes(target);
+  if(!nodes.length) return '';
+  const wrap=document.createElement('div');
+  nodes.forEach(node=>{
+    const clone=cleanPolicyClone(node);
+    wrap.appendChild(clone);
+  });
+  return wrap.innerHTML;
+}
+
+function printSelectedPolicies(){
+  if(window.MHS_ROLE!=='admin') return;
+  if(!multiPrintPicker) return;
+  const isInternalPolicies = multiPrintPicker.closest('.doc-view')?.id === 'view-politicas';
+
+  const selectedTargets=[...document.querySelectorAll('#multiPrintList input[type="checkbox"]:checked')]
+    .map(c=>c.value);
+
+  if(!selectedTargets.length) return;
+
+  const allItems=getPrintableItems(multiPrintPicker);
+  const selected=selectedTargets
+    .map(target=>allItems.find(item=>item.target===target))
+    .filter(Boolean);
+
+  // Abre diretamente a partir do clique do usuário.
+  const printWindow=window.open('', '_blank', 'width=980,height=760');
+  if(!printWindow){
+    alert('O navegador bloqueou a janela de impressão. Permita pop-ups e tente novamente.');
+    return;
+  }
+
+  const sections=selected.map((data,index)=>{
+    const content=getPrintableSectionHtml(data.target);
+    return `
+      <section class="print-policy">
+        <header class="print-header">
+          <span class="print-number">${escapePrintText(data.number)}</span>
+          <div class="print-title">
+            <h1>${escapePrintText(data.name)}</h1>
+            <p>Mais Hidro Soluções — Políticas Corporativas</p>
+          </div>
+        </header>
+        <main>${content}</main>
+      </section>
+    `;
+  }).join('');
+
+  const doc=`<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Políticas Corporativas</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:#344d69}
+body{font-family:Arial,Helvetica,sans-serif;padding:16mm}
+.print-policy{
+  width:100%;
+  margin:0 0 6mm;
+  break-inside:auto;
+  page-break-inside:auto;
+  break-before:auto;
+  page-break-before:auto;
+  break-after:auto;
+  page-break-after:auto;
+}
+.print-policy:last-child{margin-bottom:0}
+.print-header{
+  display:flex;align-items:center;gap:12px;
+  padding-bottom:15px;margin-bottom:18px;
+  border-bottom:1px solid #d8e3ed;
+  break-after:avoid-page;
+  page-break-after:avoid;
+}
+.print-number{
+  min-width:38px;height:38px;padding:0 8px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;background:#eaf6ff;color:#0c3976;
+  font-weight:700;font-size:12px;
+}
+.print-title h1{margin:0;color:#0c3976;font-size:25px;line-height:1.15}
+.print-title p{margin:5px 0 0;color:#667d94;font-size:12px}
+h2{
+  color:#0c3976;font-size:19px;margin:21px 0 9px;
+  break-after:avoid-page;page-break-after:avoid;
+}
+h3{
+  color:#155ca5;font-size:15px;margin:16px 0 7px;
+  break-after:avoid-page;page-break-after:avoid;
+}
+p{
+  font-size:13px;line-height:1.55;color:#344d69;
+  orphans:4;widows:4;
+}
+li{
+  font-size:13px;line-height:1.55;color:#344d69;
+  break-inside:avoid-page;page-break-inside:avoid;
+}
+ul,ol{
+  padding-left:22px;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:12px 0;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+thead{display:table-header-group}
+tfoot{display:table-footer-group}
+th,td{
+  border:1px solid #d8e3ed;
+  padding:8px 9px;
+  text-align:left;
+  vertical-align:top;
+  font-size:12px
+}
+th{background:#f0f8ff;color:#0c3976}
+tr{
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.table-wrap,
+.notice,
+.bullet,
+blockquote{
+  overflow:visible!important;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.print-preface,
+.print-subsection{
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.print-section{
+  break-inside:auto;
+  page-break-inside:auto;
+}
+.print-section + .print-section{
+  margin-top:2mm;
+}
+
+button,.picker-actions,.picker-pagination,.picker-back-list,.picker-print-btn{display:none!important}
+
+/* Ajuste EXCLUSIVO da aba Políticas Internas */
+.internal-policies-print .print-policy{
+  break-inside:auto !important;
+  page-break-inside:auto !important;
+}
+
+/* O bloco inicial não pode terminar antes de "Regras Principais". */
+.internal-policies-print .print-opening-block{
+  break-inside:avoid-page !important;
+  page-break-inside:avoid !important;
+  margin-bottom:0 !important;
+}
+
+/* A lista pode continuar na página seguinte quando for longa. */
+.internal-policies-print .print-rules-block{
+  break-inside:auto !important;
+  page-break-inside:auto !important;
+}
+
+.internal-policies-print .print-rules-block ul,
+.internal-policies-print .print-rules-block ol{
+  break-inside:auto !important;
+  page-break-inside:auto !important;
+}
+
+.internal-policies-print .print-rules-block li{
+  break-inside:avoid-page !important;
+  page-break-inside:avoid !important;
+}
+
+/* Mantém o título "Regras Principais" com pelo menos o início da lista. */
+.internal-policies-print .print-rules-title{
+  break-after:avoid-page !important;
+  page-break-after:avoid !important;
+}
+
+@page{size:auto;margin:14mm}
+@media print{body{padding:0}}
+</style>
+</head>
+<body class="${isInternalPolicies ? 'internal-policies-print' : ''}">
+${sections}
+<script>
+function preparePrintLayout(){
+  document.querySelectorAll('.print-policy main').forEach(function(main){
+    if(main.dataset.printPrepared==='1') return;
+    main.dataset.printPrepared='1';
+
+    const original=[...main.children];
+    main.innerHTML='';
+
+    let section=null;
+    let subsection=null;
+    let preface=null;
+
+    original.forEach(function(el){
+      const tag=(el.tagName||'').toUpperCase();
+
+      if(tag==='H2'){
+        section=document.createElement('section');
+        section.className='print-section';
+        main.appendChild(section);
+        section.appendChild(el);
+        subsection=null;
+        preface=null;
+        return;
+      }
+
+      if(tag==='H3'){
+        if(!section){
+          section=document.createElement('section');
+          section.className='print-section';
+          main.appendChild(section);
+        }
+        subsection=document.createElement('div');
+        subsection.className='print-subsection';
+        section.appendChild(subsection);
+        subsection.appendChild(el);
+        preface=null;
+        return;
+      }
+
+      if(subsection){
+        subsection.appendChild(el);
+      }else if(section){
+        section.appendChild(el);
+      }else{
+        if(!preface){
+          preface=document.createElement('div');
+          preface.className='print-preface';
+          main.appendChild(preface);
+        }
+        preface.appendChild(el);
+      }
+    });
+
+    /* Apenas Políticas Internas:
+       agrupa Título + Objetivo + cabeçalho Regras Principais,
+       mas deixa a lista de regras livre para continuar na folha seguinte. */
+    if(document.body.classList.contains('internal-policies-print')){
+      const children=[...main.children];
+      const firstSection=children.find(el=>el.classList.contains('print-section'));
+
+      if(firstSection){
+        const subs=[...firstSection.children].filter(el=>el.classList.contains('print-subsection'));
+        const objetivo=subs.find(el=>{
+          const h=el.querySelector('h3');
+          return h && h.textContent.trim().toLowerCase()==='objetivo';
+        });
+        const regras=subs.find(el=>{
+          const h=el.querySelector('h3');
+          return h && h.textContent.trim().toLowerCase()==='regras principais';
+        });
+
+        if(objetivo && regras){
+          const opening=document.createElement('div');
+          opening.className='print-opening-block';
+
+          // Move o H2 da política para o bloco inicial.
+          const policyTitle=firstSection.querySelector(':scope > h2');
+          if(policyTitle) opening.appendChild(policyTitle);
+
+          // Move o objetivo completo.
+          opening.appendChild(objetivo);
+
+          // Move apenas o título "Regras Principais" para junto do objetivo.
+          const regrasTitle=regras.querySelector('h3');
+          if(regrasTitle){
+            regrasTitle.classList.add('print-rules-title');
+            opening.appendChild(regrasTitle);
+          }
+
+          regras.classList.add('print-rules-block');
+
+          firstSection.insertBefore(opening, firstSection.firstChild);
+        }
+      }
+    }
+  });
+}
+
+window.addEventListener('load',function(){
+  preparePrintLayout();
+  setTimeout(function(){
+    window.focus();
+    window.print();
+  },220);
+});
+window.addEventListener('afterprint',function(){
+  window.close();
+});
+<\/script>
+
+<div class="multi-print-overlay" id="multiPrintModal" aria-hidden="true">
+  <div class="multi-print-modal" role="dialog" aria-modal="true" aria-labelledby="multiPrintTitle">
+    <div class="multi-print-head">
+      <div>
+        <span class="multi-print-kicker">Impressão</span>
+        <h3 id="multiPrintTitle">Selecionar políticas</h3>
+        <p>Marque uma ou mais políticas para imprimir em sequência.</p>
+      </div>
+      <button type="button" class="multi-print-close" onclick="closeMultiPrintDialog()" aria-label="Fechar">×</button>
+    </div>
+
+    <div class="multi-print-toolbar">
+      <button type="button" class="multi-print-select-all" onclick="toggleSelectAllPrint()">Selecionar todas</button>
+      <span id="multiPrintCount">0 políticas selecionadas</span>
+    </div>
+
+    <div class="multi-print-list" id="multiPrintList"></div>
+
+    <div class="multi-print-actions">
+      <button type="button" class="multi-print-btn secondary" onclick="closeMultiPrintDialog()">Cancelar</button>
+      <button type="button" class="multi-print-btn primary" id="multiPrintConfirm" onclick="printSelectedPolicies()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9V2h12v7"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        Imprimir selecionadas
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>`;
+
+  closeMultiPrintDialog();
+  printWindow.document.open();
+  printWindow.document.write(doc);
+  printWindow.document.close();
+}
+
+
+const MHS_EDITOR_VERSION = 'v2';
+const runtimeState = { added:[], renamed:{}, deleted:[] };
+
+function safeLoadState(){
+  try{
+    const raw = localStorage.getItem('mhs_manual_editor_'+MHS_EDITOR_VERSION);
+    if(raw){
+      const s=JSON.parse(raw);
+      return {
+        added:Array.isArray(s.added)?s.added:[],
+        renamed:s.renamed||{},
+        deleted:Array.isArray(s.deleted)?s.deleted:[]
+      };
+    }
+  }catch(e){}
+  return runtimeState;
+}
+function safeSaveState(state){
+  runtimeState.added = state.added || [];
+  runtimeState.renamed = state.renamed || {};
+  runtimeState.deleted = state.deleted || [];
+  try{
+    localStorage.setItem('mhs_manual_editor_'+MHS_EDITOR_VERSION, JSON.stringify(state));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function getPickerTarget(item){
+  const oc=item.getAttribute('onclick')||'';
+  const m=oc.match(/goPolicy\('([^']+)'/);
+  return m ? m[1] : null;
+}
+
+function toggleManage(event,el){
+  if(window.MHS_ROLE!=='admin') return;
+  event.preventDefault();
+  event.stopPropagation();
+  const picker=el.closest('.policy-picker');
+  if(!picker) return;
+  picker.open=true;
+  picker.classList.toggle('manage-mode');
+}
+
+function buildActionIcon(type){
+  const span=document.createElement('span');
+  span.className='picker-action '+type;
+  span.title=type==='edit'?'Editar':'Excluir';
+  span.setAttribute('role','button');
+  span.setAttribute('tabindex','0');
+  span.setAttribute('aria-label',span.title);
+  span.innerHTML=type==='edit'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg>';
+  return span;
+}
+
+function sectionNodes(target){
+  const start=document.getElementById(target);
+  if(!start) return [];
+  const nodes=[start];
+  let n=start.nextElementSibling;
+  while(n && !n.classList.contains('policy-anchor') && !n.classList.contains('user-created-section')){
+    nodes.push(n);
+    n=n.nextElementSibling;
+  }
+  return nodes;
+}
+
+function getSectionContent(target){
+  const nodes=sectionNodes(target);
+  if(!nodes.length) return '';
+  return nodes.slice(1).map(n=>n.innerText.trim()).filter(Boolean).join('\n\n');
+}
+
+function pickerKind(picker){
+  const section=picker.closest('.doc-view');
+  if(!section) return 'section';
+  if(section.id==='view-politicas') return 'politica';
+  if(section.id==='view-dayoff') return 'dayoff';
+  return 'beneficio';
+}
+
+function pickerBody(picker){
+  return picker.closest('.doc-content');
+}
+
+function nextGeneratedId(picker){
+  const kind=pickerKind(picker);
+  let i=1;
+  let id='';
+  do{
+    id='custom-'+kind+'-'+Date.now().toString(36)+'-'+i++;
+  }while(document.getElementById(id));
+  return id;
+}
+
+function closeEditor(){
+  const modal=document.getElementById('editorModal');
+  if(!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+
+function openAddEditor(picker){
+  if(window.MHS_ROLE!=='admin') return;
+  const modal=document.getElementById('editorModal');
+  document.getElementById('editorMode').value='add';
+  document.getElementById('editorTarget').value='';
+  document.getElementById('editorPickerId').value=picker.dataset.pickerId;
+  document.getElementById('editorNumber').value='';
+  document.getElementById('editorName').value='';
+  document.getElementById('editorContent').value='';
+  document.getElementById('editorModalKicker').textContent='Nova seção';
+  document.getElementById('editorModalTitle').textContent='Adicionar política/seção';
+  document.getElementById('editorMessage').textContent='';
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('editorName').focus(),30);
+}
+
+function openEditEditor(item){
+  if(window.MHS_ROLE!=='admin') return;
+  const picker=item.closest('.policy-picker');
+  const target=getPickerTarget(item);
+  if(!picker || !target) return;
+
+  document.getElementById('editorMode').value='edit';
+  document.getElementById('editorTarget').value=target;
+  document.getElementById('editorPickerId').value=picker.dataset.pickerId;
+  document.getElementById('editorNumber').value=item.querySelector('.picker-number')?.textContent.trim()||'';
+  document.getElementById('editorName').value=item.querySelector('.picker-name')?.textContent.trim()||'';
+  document.getElementById('editorContent').value=getSectionContent(target);
+  document.getElementById('editorModalKicker').textContent='Editar conteúdo';
+  document.getElementById('editorModalTitle').textContent='Editar política/seção';
+  document.getElementById('editorMessage').textContent='';
+
+  const modal=document.getElementById('editorModal');
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+}
+
+function createMenuItem(data,picker){
+  const item=document.createElement('button');
+  item.type='button';
+  item.className='picker-item';
+  item.setAttribute('onclick',`goPolicy('${data.id}',this)`);
+  item.innerHTML=`
+    <span class="picker-number"></span>
+    <span class="picker-name"></span>
+    <span class="picker-arrow">→</span>
+  `;
+  item.querySelector('.picker-number').textContent=data.number||'•';
+  item.querySelector('.picker-name').textContent=data.name;
+
+  attachItemActions(item);
+  const addRow=picker.querySelector('.picker-add-row');
+  const hint=picker.querySelector('.manage-hint');
+  if(hint) picker.querySelector('.picker-list').insertBefore(item,hint);
+  else if(addRow) picker.querySelector('.picker-list').insertBefore(item,addRow);
+  else picker.querySelector('.picker-list').appendChild(item);
+  return item;
+}
+
+function createContentSection(data,picker){
+  const body=pickerBody(picker);
+  const section=document.createElement('section');
+  section.className='user-created-section policy-anchor';
+  section.id=data.id;
+
+  const h=document.createElement('h2');
+  h.textContent=(data.number?data.number+' · ':'')+data.name;
+  const content=document.createElement('div');
+  content.className='user-content';
+  data.content.split(/\n{2,}/).forEach(part=>{
+    const p=document.createElement('p');
+    p.textContent=part.trim();
+    if(part.trim()) content.appendChild(p);
+  });
+
+  section.append(h,content);
+  body.appendChild(section);
+  return section;
+}
+
+function addNewSection(data,picker,persist=true){
+  createMenuItem(data,picker);
+  createContentSection(data,picker);
+
+  const created=document.getElementById(data.id);
+  if(created) created.classList.add('policy-source-hidden');
+
+  if(persist){
+    const state=safeLoadState();
+    state.added=state.added.filter(x=>x.id!==data.id);
+    state.added.push({...data,pickerId:picker.dataset.pickerId});
+    safeSaveState(state);
+  }
+
+  const totalItems=getVisiblePickerItems(picker).length;
+  const lastPage=Math.max(1,Math.ceil(totalItems/PICKER_PAGE_SIZE));
+  picker.dataset.currentPage=String(lastPage);
+  ensurePickerPagination(picker);
+}
+
+function editExistingSection(data,picker){
+  const target=data.id;
+  const item=[...picker.querySelectorAll('.picker-item')].find(i=>getPickerTarget(i)===target);
+  if(item){
+    item.querySelector('.picker-number').textContent=data.number||'•';
+    item.querySelector('.picker-name').textContent=data.name;
+  }
+
+  const start=document.getElementById(target);
+  if(start){
+    if(start.classList.contains('user-created-section')){
+      const h=start.querySelector('h2');
+      if(h) h.textContent=(data.number?data.number+' · ':'')+data.name;
+      const content=start.querySelector('.user-content');
+      if(content){
+        content.innerHTML='';
+        data.content.split(/\n{2,}/).forEach(part=>{
+          if(!part.trim()) return;
+          const p=document.createElement('p');
+          p.textContent=part.trim();
+          content.appendChild(p);
+        });
+      }
+    }else{
+      const current=start.textContent.trim();
+      const prefix=current.match(/^(?:\d+(?:\.\d+)?\.?\s*|ANEXO\s+[IVX]+\s*[–-]?\s*|REFERÊNCIAS\s*)/i);
+      start.textContent=(data.number ? data.number+'. ' : (prefix?prefix[0]:''))+data.name;
+
+      const nodes=sectionNodes(target).slice(1);
+      if(data.content.trim()){
+        nodes.forEach((n,idx)=>{
+          if(idx===0){
+            n.textContent=data.content.trim();
+            n.style.display='';
+          }else{
+            n.style.display='none';
+          }
+        });
+      }
+    }
+  }
+
+  const state=safeLoadState();
+  const addedIndex=state.added.findIndex(x=>x.id===target);
+  if(addedIndex>=0){
+    state.added[addedIndex]={...state.added[addedIndex],...data};
+  }else{
+    state.renamed[target]={number:data.number,name:data.name,content:data.content};
+  }
+  safeSaveState(state);
+}
+
+let pendingDeleteItem=null;
+
+function openDeleteConfirm(event,item){
+  if(window.MHS_ROLE!=='admin') return;
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const target=getPickerTarget(item);
+  if(!target) return;
+
+  pendingDeleteItem=item;
+  const name=item.querySelector('.picker-name')?.textContent.trim() || 'esta política';
+  const number=item.querySelector('.picker-number')?.textContent.trim() || '';
+
+  document.getElementById('deletePolicyName').textContent=(number ? number+' — ' : '')+name;
+  const modal=document.getElementById('deleteModal');
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+}
+
+function closeDeleteConfirm(){
+  const modal=document.getElementById('deleteModal');
+  if(modal){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+  }
+  pendingDeleteItem=null;
+}
+
+function confirmDeletePolicy(){
+  if(window.MHS_ROLE!=='admin') return;
+  const item=pendingDeleteItem;
+  if(!item){
+    closeDeleteConfirm();
+    return;
+  }
+
+  const target=getPickerTarget(item);
+  if(!target){
+    closeDeleteConfirm();
+    return;
+  }
+
+  const start=document.getElementById(target);
+  const state=safeLoadState();
+
+  if(start && start.classList.contains('user-created-section')){
+    start.remove();
+    state.added=state.added.filter(x=>x.id!==target);
+  }else{
+    sectionNodes(target).forEach(n=>{
+      n.style.display='none';
+      n.classList.add('policy-source-hidden');
+    });
+    if(!state.deleted.includes(target)) state.deleted.push(target);
+  }
+
+  const picker=item.closest('.policy-picker');
+  item.dataset.deleted='1';
+  item.remove();
+  safeSaveState(state);
+
+  if(picker) ensurePickerPagination(picker);
+
+  closeDeleteConfirm();
+  showEditorToast('Política/seção excluída.');
+}
+
+function attachItemActions(item){
+  if(item.querySelector('.picker-actions')) return;
+
+  const actions=document.createElement('span');
+  actions.className='picker-actions';
+
+  const edit=buildActionIcon('edit');
+  const del=buildActionIcon('delete');
+
+  edit.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    openEditEditor(item);
+  });
+  edit.addEventListener('keydown',e=>{
+    if(e.key==='Enter' || e.key===' '){
+      e.preventDefault();
+      e.stopPropagation();
+      openEditEditor(item);
+    }
+  });
+
+  del.addEventListener('click',e=>openDeleteConfirm(e,item));
+  del.addEventListener('keydown',e=>{
+    if(e.key==='Enter' || e.key===' '){
+      e.preventDefault();
+      e.stopPropagation();
+      openDeleteConfirm(e,item);
+    }
+  });
+
+  actions.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  actions.append(edit,del);
+  item.appendChild(actions);
+}
+
+function installEditorControls(){
+  document.querySelectorAll('.policy-picker').forEach((picker,index)=>{
+    if(!picker.dataset.pickerId) picker.dataset.pickerId='picker-'+index;
+    const list=picker.querySelector('.picker-list');
+    if(!list) return;
+
+    list.querySelectorAll('.picker-item').forEach(attachItemActions);
+
+    let hint=list.querySelector('.manage-hint');
+    if(!hint){
+      hint=document.createElement('div');
+      hint.className='manage-hint';
+      hint.textContent='Use o lápis para editar, a lixeira para excluir ou o botão abaixo para adicionar.';
+      list.appendChild(hint);
+    }
+
+    let addRow=list.querySelector('.picker-add-row');
+    if(!addRow){
+      addRow=document.createElement('div');
+      addRow.className='picker-add-row';
+      addRow.innerHTML='<button type="button" class="picker-add">＋ Adicionar nova política/seção</button>';
+      list.appendChild(addRow);
+    }
+
+    const addBtn=addRow.querySelector('.picker-add');
+    addBtn.onclick=(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      openAddEditor(picker);
+    };
+  });
+
+  restoreEditorState();
+  refreshAllPickerPagination();
+}
+
+function restoreEditorState(){
+  const state=safeLoadState();
+
+  document.querySelectorAll('.policy-picker').forEach(picker=>{
+    picker.querySelectorAll('.picker-item').forEach(item=>{
+      const target=getPickerTarget(item);
+      if(!target) return;
+
+      if(state.deleted.includes(target)){
+        item.remove();
+        sectionNodes(target).forEach(n=>n.style.display='none');
+        return;
+      }
+
+      const changed=state.renamed[target];
+      if(changed){
+        if(changed.number) item.querySelector('.picker-number').textContent=changed.number;
+        if(changed.name) item.querySelector('.picker-name').textContent=changed.name;
+      }
+    });
+  });
+
+  state.added.forEach(data=>{
+    const picker=document.querySelector(`.policy-picker[data-picker-id="${data.pickerId}"]`);
+    if(picker && !document.getElementById(data.id)){
+      addNewSection(data,picker,false);
+    }
+  });
+
+  hideOriginalPolicySections();
+}
+
+function initFunctionalEditor(){
+  if(window.__mhsEditorInitialized) return;
+
+  const form=document.getElementById('editorForm');
+  const close=document.getElementById('editorClose');
+  const cancel=document.getElementById('editorCancel');
+  const modal=document.getElementById('editorModal');
+  const deleteModal=document.getElementById('deleteModal');
+  const deleteCancel=document.getElementById('deleteCancelBtn');
+  const deleteConfirm=document.getElementById('deleteConfirmBtn');
+  if(!form || !close || !cancel || !modal || !deleteModal || !deleteCancel || !deleteConfirm) return;
+
+  window.__mhsEditorInitialized=true;
+  installEditorControls();
+
+  close.addEventListener('click',closeEditor);
+  cancel.addEventListener('click',closeEditor);
+  modal.addEventListener('click',e=>{
+    if(e.target===modal) closeEditor();
+  });
+
+  deleteCancel.addEventListener('click',closeDeleteConfirm);
+  deleteConfirm.addEventListener('click',confirmDeletePolicy);
+  deleteModal.addEventListener('click',e=>{
+    if(e.target===deleteModal) closeDeleteConfirm();
+  });
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      if(deleteModal.classList.contains('open')) closeDeleteConfirm();
+      else if(modal.classList.contains('open')) closeEditor();
+    }
+  });
+
+  form.addEventListener('submit',e=>{
+    e.preventDefault();
+
+    const mode=document.getElementById('editorMode').value;
+    const target=document.getElementById('editorTarget').value;
+    const pickerId=document.getElementById('editorPickerId').value;
+    const number=document.getElementById('editorNumber').value.trim();
+    const name=document.getElementById('editorName').value.trim();
+    const content=document.getElementById('editorContent').value.trim();
+    const msg=document.getElementById('editorMessage');
+
+    if(!name){
+      msg.textContent='Informe o nome.';
+      return;
+    }
+    if(!content){
+      msg.textContent='Informe o conteúdo.';
+      return;
+    }
+
+    const picker=document.querySelector(`.policy-picker[data-picker-id="${pickerId}"]`);
+    if(!picker){
+      msg.textContent='Não foi possível localizar esta área.';
+      return;
+    }
+
+    if(mode==='add'){
+      const id=nextGeneratedId(picker);
+      addNewSection({id,number,name,content},picker,true);
+      picker.open=true;
+      picker.classList.add('manage-mode');
+    }else{
+      editExistingSection({id:target,number,name,content},picker);
+    }
+
+    closeEditor();
+  });
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initFunctionalEditor, {once:true});
+}else{
+  initFunctionalEditor();
+}
+
+
+window.addEventListener('beforeprint',()=>{
+  document.documentElement.classList.add('native-printing');
+});
+window.addEventListener('afterprint',()=>{
+  document.documentElement.classList.remove('native-printing');
+});
+
+</script>
+
+<div class="editor-modal-overlay" id="editorModal" aria-hidden="true">
+  <div class="editor-modal" role="dialog" aria-modal="true" aria-labelledby="editorModalTitle">
+    <div class="editor-modal-head">
+      <div>
+        <span class="editor-kicker" id="editorModalKicker">Nova seção</span>
+        <h3 id="editorModalTitle">Adicionar política/seção</h3>
+      </div>
+      <button type="button" class="editor-close" id="editorClose" aria-label="Fechar" onclick="closeEditor()">×</button>
+    </div>
+
+    <form id="editorForm">
+      <input type="hidden" id="editorMode" value="add">
+      <input type="hidden" id="editorTarget">
+      <input type="hidden" id="editorPickerId">
+
+      <label class="editor-field">
+        <span>Número / identificador</span>
+        <input id="editorNumber" type="text" maxlength="30" placeholder="Ex.: 13 ou 8.2">
+      </label>
+
+      <label class="editor-field">
+        <span>Nome</span>
+        <input id="editorName" type="text" maxlength="140" placeholder="Nome da política ou seção" required>
+      </label>
+
+      <label class="editor-field">
+        <span>Conteúdo</span>
+        <textarea id="editorContent" rows="9" placeholder="Digite o conteúdo da nova política/seção..." required></textarea>
+      </label>
+
+      <div class="editor-message" id="editorMessage" aria-live="polite"></div>
+
+      <div class="editor-actions">
+        <button type="button" class="editor-btn secondary" id="editorCancel" onclick="closeEditor()">Cancelar</button>
+        <button type="submit" class="editor-btn primary" id="editorSave">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div class="delete-modal-overlay" id="deleteModal" aria-hidden="true">
+  <div class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="delete-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18"/>
+        <path d="M8 6V4h8v2"/>
+        <path d="M19 6l-1 14H6L5 6"/>
+        <path d="M10 11v5M14 11v5"/>
+      </svg>
+    </div>
+    <h3 id="deleteModalTitle">Excluir política/seção?</h3>
+    <p>Você está prestes a excluir:</p>
+    <strong class="delete-policy-name" id="deletePolicyName"></strong>
+    <p class="delete-warning">O item será removido da lista e da visualização deste manual.</p>
+
+    <div class="delete-actions">
+      <button type="button" class="delete-btn cancel" id="deleteCancelBtn">Cancelar</button>
+      <button type="button" class="delete-btn confirm" id="deleteConfirmBtn">Excluir política</button>
+    </div>
+  </div>
+</div>
+
+<div class="editor-toast" id="editorToast" aria-live="polite"></div>
+
+
+
+
+
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+/* =========================================================
+   CONFIGURAÇÃO SUPABASE
+   Use somente:
+   - Project URL
+   - Publishable key / anon public
+   NUNCA use service_role ou secret key no navegador.
+   ========================================================= */
+const SUPABASE_URL = 'https://imdwkxhbcohyyczhvsil.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZHdreGhiY29oeXljemh2c2lsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3NTYyMDQsImV4cCI6MjEwMzMzMjIwNH0.j0Gb8UB5ZmNNZMAudiEvjK8XcZLWLzvPFbDurwtmMZM';
+
+window.MHS_ROLE = 'viewer';
+document.body.dataset.role = 'viewer';
+
+const overlay = document.getElementById('adminAccessOverlay');
+const closeBtn = document.getElementById('adminAccessClose');
+const form = document.getElementById('adminAccessForm');
+const emailInput = document.getElementById('adminAccessEmail');
+const message = document.getElementById('adminAccessMessage');
+const submitBtn = document.getElementById('adminAccessSubmit');
+const configNote = document.getElementById('adminConfigNote');
+const sessionBar = document.getElementById('sessionBar');
+const sessionEmail = document.getElementById('sessionEmail');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const configured =
+  SUPABASE_URL.startsWith('https://') &&
+  !SUPABASE_URL.includes('COLE_AQUI') &&
+  SUPABASE_ANON_KEY.length > 20 &&
+  !SUPABASE_ANON_KEY.includes('COLE_AQUI');
+
+const adminRequested =
+  new URLSearchParams(window.location.search).get('admin') === '1';
+
+let supabase = null;
+
+function setMessage(text, ok=false){
+  message.textContent = text || '';
+  message.style.color = ok ? '#277a57' : '#b34450';
+}
+
+function setViewer(){
+  window.MHS_ROLE = 'viewer';
+  document.body.dataset.role = 'viewer';
+  sessionBar.hidden = true;
+
+  document.querySelectorAll('.policy-picker.manage-mode')
+    .forEach(el => el.classList.remove('manage-mode'));
+}
+
+function setAdmin(user){
+  window.MHS_ROLE = 'admin';
+  document.body.dataset.role = 'admin';
+  sessionEmail.textContent = user?.email || '';
+  sessionBar.hidden = false;
+  closeAdminDialog();
+  removeAdminQueryFromAddress();
+}
+
+function openAdminDialog(){
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden','false');
+  setTimeout(()=>emailInput?.focus(),50);
+}
+
+function closeAdminDialog(){
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden','true');
+}
+
+function removeAdminQueryFromAddress(){
+  const url = new URL(window.location.href);
+  url.searchParams.delete('admin');
+  url.hash = '';
+  history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+}
+
+function adminRedirectUrl(){
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.hash = '';
+  url.searchParams.set('admin','1');
+  return url.toString();
+}
+
+async function isAuthorizedAdmin(user){
+  if(!supabase || !user) return false;
+
+  const { data, error } = await supabase
+    .from('manual_politicas_perfis')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if(error){
+    console.error('Erro ao validar administrador:', error);
+    return false;
+  }
+
+  return data?.role === 'admin';
+}
+
+async function validateSession(){
+  setViewer();
+
+  if(!supabase) {
+    if(adminRequested) openAdminDialog();
+    return;
+  }
+
+  const { data, error } = await supabase.auth.getUser();
+  const user = data?.user;
+
+  if(error || !user){
+    if(adminRequested) openAdminDialog();
+    return;
+  }
+
+  if(await isAuthorizedAdmin(user)){
+    setAdmin(user);
+    return;
+  }
+
+  // Uma conta existente no projeto, mas sem role=admin,
+  // continua vendo somente a versão pública.
+  await supabase.auth.signOut();
+  setViewer();
+
+  if(adminRequested){
+    openAdminDialog();
+    setMessage('Este usuário não possui permissão administrativa.');
+  }
+}
+
+if(configured){
+  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  });
+  window.mhsSupabase = supabase;
+}else if(adminRequested){
+  configNote.classList.add('show');
+  submitBtn.disabled = true;
+  openAdminDialog();
+  setMessage('Falta configurar a URL e a chave pública do Supabase.');
+}
+
+form.addEventListener('submit', async (event)=>{
+  event.preventDefault();
+  if(!supabase) return;
+
+  const email = emailInput.value.trim();
+  if(!email) return;
+
+  setMessage('');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Enviando...';
+
+  try{
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options:{
+        shouldCreateUser:false,
+        emailRedirectTo:adminRedirectUrl()
+      }
+    });
+
+    if(error){
+      console.error(error);
+      setMessage('Não foi possível enviar o link de acesso.');
+      return;
+    }
+
+    setMessage('Link enviado. Abra o e-mail e clique no acesso administrativo.', true);
+  }catch(err){
+    console.error(err);
+    setMessage('Não foi possível conectar ao Supabase.');
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Enviar link de acesso';
+  }
+});
+
+closeBtn.addEventListener('click', ()=>{
+  closeAdminDialog();
+  setViewer();
+  removeAdminQueryFromAddress();
+});
+
+overlay.addEventListener('click', (event)=>{
+  if(event.target === overlay){
+    closeAdminDialog();
+    setViewer();
+    removeAdminQueryFromAddress();
+  }
+});
+
+logoutBtn.addEventListener('click', async ()=>{
+  if(supabase){
+    await supabase.auth.signOut();
+  }
+  setViewer();
+});
+
+if(supabase){
+  supabase.auth.onAuthStateChange((event, session)=>{
+    // Evita lógica pesada dentro do callback; valida logo depois.
+    if(event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION'){
+      setTimeout(()=>validateSession(),0);
+    }
+    if(event === 'SIGNED_OUT'){
+      setViewer();
+    }
+  });
+}
+
+await validateSession();
+</script>
+
+</body>
+</html>
