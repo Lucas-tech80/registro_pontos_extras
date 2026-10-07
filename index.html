@@ -1223,7 +1223,8 @@
 
     .adjust-modal {
       width: min(760px, 100%);
-      height: 100vh;
+      /* O backdrop fixo já ocupa o viewport útil do WebView. */
+      height: 100%;
       display: flex;
       flex-direction: column;
       background: #f7faff;
@@ -1697,7 +1698,8 @@
 
     .history-modal {
       width: min(1040px, 100%);
-      height: 100vh;
+      /* Não reutiliza a altura física da janela Android. */
+      height: 100%;
       display: flex;
       flex-direction: column;
       background: #fff;
@@ -4165,7 +4167,20 @@
     let editingAgendaTripId = null;
     let absenceObservationContext = null;
     let isOnTripToday = false;
+    let scrollBeforeAdminMode = 0;
     const MAX_LOCATION_ACCURACY_METERS = 300;
+
+    function rememberPageScroll(modal) {
+      modal.dataset.pageScrollY = String(window.scrollY);
+    }
+
+    function restorePageScroll(modal) {
+      const savedScrollY = Number(modal.dataset.pageScrollY);
+      delete modal.dataset.pageScrollY;
+      if (!Number.isFinite(savedScrollY)) return;
+
+      requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
+    }
 
     function localDateISO(date = new Date()) {
       const y = date.getFullYear();
@@ -5863,6 +5878,7 @@
         showToast('Acesso administrativo não autorizado para este usuário.');
         return;
       }
+      scrollBeforeAdminMode = window.scrollY;
       document.body.classList.add('admin-mode');
       adminAccessBtn.setAttribute('aria-label', 'Menu do usuário');
       adminAccessBtn.setAttribute('title', 'Menu do usuário');
@@ -5877,7 +5893,7 @@
       adminAccessBtn.setAttribute('aria-label', 'Menu do usuário');
       adminAccessBtn.setAttribute('title', 'Menu do usuário');
       updateProfileAdminAction();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, scrollBeforeAdminMode);
     }
 
     function toggleAdminAccess() {
@@ -5888,16 +5904,19 @@
 
     function positionProfileDrawer() {
       const buttonRect = adminAccessBtn.getBoundingClientRect();
-      const menuWidth = Math.min(244, window.innerWidth - 24);
+      const viewport = window.visualViewport;
+      const viewportWidth = viewport?.width || window.innerWidth;
+      const viewportHeight = viewport?.height || window.innerHeight;
+      const menuWidth = Math.min(244, viewportWidth - 24);
       const gap = 10;
       const viewportPadding = 12;
 
       let left = buttonRect.right - menuWidth;
-      left = Math.max(viewportPadding, Math.min(left, window.innerWidth - menuWidth - viewportPadding));
+      left = Math.max(viewportPadding, Math.min(left, viewportWidth - menuWidth - viewportPadding));
 
       let top = buttonRect.bottom + gap;
-      const estimatedHeight = Math.min(profileDrawer.scrollHeight || 240, window.innerHeight - 24);
-      if (top + estimatedHeight > window.innerHeight - viewportPadding) {
+      const estimatedHeight = Math.min(profileDrawer.scrollHeight || 240, viewportHeight - 24);
+      if (top + estimatedHeight > viewportHeight - viewportPadding) {
         top = Math.max(viewportPadding, buttonRect.top - estimatedHeight - gap);
       }
 
@@ -5911,11 +5930,13 @@
         return;
       }
       updateProfileAdminAction();
-      positionProfileDrawer();
-      profileDrawer.classList.add('show');
-      profileDrawerBackdrop.classList.add('show');
-      profileDrawer.setAttribute('aria-hidden', 'false');
-      profileDrawerBackdrop.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => {
+        positionProfileDrawer();
+        profileDrawer.classList.add('show');
+        profileDrawerBackdrop.classList.add('show');
+        profileDrawer.setAttribute('aria-hidden', 'false');
+        profileDrawerBackdrop.setAttribute('aria-hidden', 'false');
+      });
     }
 
     function closeProfileDrawer() {
@@ -5956,6 +5977,7 @@
     }
 
     function openMyProfileModal() {
+      rememberPageScroll(myProfileModal);
       const profile = currentUserProfile || {};
       myProfileAvatar.textContent = profileInitials(profile.nome);
       myProfileName.value = profile.nome || '—';
@@ -5993,6 +6015,7 @@
       setMyProfileEditMode(false);
       myProfileModal.classList.remove('show');
       myProfileModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(myProfileModal);
     }
 
     function openMyProfileFromMenu() {
@@ -6048,6 +6071,7 @@
     }
 
     function openHoursModal() {
+      rememberPageScroll(hoursModal);
       // Horas trabalhadas pessoais, respeitando os resets individuais definidos acima.
       const ownRecords = personalPointRecords();
       const workedTotal = ownRecords.reduce((sum, r) => sum + workedMinutes(r), 0);
@@ -6061,6 +6085,7 @@
     function closeHoursModal() {
       hoursModal.classList.remove('show');
       hoursModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(hoursModal);
     }
 
     function renderPersonalHistory() {
@@ -6574,6 +6599,7 @@
 
     function openAdjustModal() {
       closeProfileDrawer();
+      rememberPageScroll(adjustModal);
       setAdjustView('home');
       adjustModal.classList.add('show');
       adjustModal.setAttribute('aria-hidden', 'false');
@@ -6582,6 +6608,7 @@
     function closeAdjustModal() {
       adjustModal.classList.remove('show');
       adjustModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(adjustModal);
     }
 
     function handleAdjustBack() {
@@ -6682,6 +6709,7 @@
 
     function openHistoryFromProfile() {
       closeProfileDrawer();
+      rememberPageScroll(historyModal);
       renderPersonalHistory();
       historyModal.classList.add('show');
       historyModal.setAttribute('aria-hidden', 'false');
@@ -6690,6 +6718,7 @@
     function closeHistoryModal() {
       historyModal.classList.remove('show');
       historyModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(historyModal);
     }
 
     function updateOtherActivityField() {
@@ -6705,6 +6734,9 @@
     adminAccessBtn.addEventListener('click', openProfileDrawer);
     logoutBtn.addEventListener('click', signOut);
     window.addEventListener('resize', () => {
+      if (profileDrawer.classList.contains('show')) positionProfileDrawer();
+    });
+    window.visualViewport?.addEventListener('resize', () => {
       if (profileDrawer.classList.contains('show')) positionProfileDrawer();
     });
 
