@@ -977,11 +977,13 @@
       z-index: 1100;
       background: transparent;
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
     }
 
     .profile-drawer-backdrop.show {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
@@ -1000,16 +1002,16 @@
       border: 1px solid #dce7f5;
       border-radius: 14px;
       box-shadow: 0 16px 38px rgba(24, 58, 103, .16);
-      transform: translateY(-8px);
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
-      transition: opacity .16s ease, transform .16s ease;
+      transition: opacity .16s ease;
       display: block;
     }
 
     .profile-drawer.show {
-      transform: translateY(0);
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
