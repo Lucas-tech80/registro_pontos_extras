@@ -486,11 +486,16 @@
       background: rgba(10, 28, 52, .35);
       backdrop-filter: blur(5px);
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
       transition: opacity .2s ease;
     }
 
-    .modal-backdrop.show { opacity: 1; pointer-events: auto; }
+    .modal-backdrop.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
 
     /* O modal de localização precisa ficar acima da área administrativa.
        Ele também é movido para o <body> no momento da abertura para escapar
@@ -507,11 +512,7 @@
       border-radius: 18px;
       background: #fff;
       box-shadow: 0 24px 70px rgba(16, 43, 78, .22);
-      transform: translateY(8px) scale(.985);
-      transition: transform .2s ease;
     }
-
-    .modal-backdrop.show .location-modal { transform: none; }
 
     .location-modal-head {
       display: flex;
@@ -977,11 +978,13 @@
       z-index: 1100;
       background: transparent;
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
     }
 
     .profile-drawer-backdrop.show {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
@@ -992,24 +995,24 @@
       left: 0;
       z-index: 1110;
       width: 244px;
-      max-width: calc(100vw - 24px);
+      max-width: calc(100% - 24px);
       height: auto;
-      max-height: calc(100vh - 24px);
+      max-height: calc(100% - 24px);
       overflow-y: auto;
       background: #fff;
       border: 1px solid #dce7f5;
       border-radius: 14px;
       box-shadow: 0 16px 38px rgba(24, 58, 103, .16);
-      transform: translateY(-8px);
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
-      transition: opacity .16s ease, transform .16s ease;
+      transition: opacity .16s ease;
       display: block;
     }
 
     .profile-drawer.show {
-      transform: translateY(0);
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
@@ -1223,7 +1226,7 @@
 
     .adjust-modal {
       width: min(760px, 100%);
-      height: 100vh;
+      height: 100%;
       display: flex;
       flex-direction: column;
       background: #f7faff;
@@ -1403,7 +1406,7 @@
 
     .adjust-edit-modal {
       width: min(620px, 100%);
-      max-height: calc(100vh - 40px);
+      max-height: calc(100% - 40px);
       overflow-y: auto;
     }
 
@@ -1697,7 +1700,7 @@
 
     .history-modal {
       width: min(1040px, 100%);
-      height: 100vh;
+      height: 100%;
       display: flex;
       flex-direction: column;
       background: #fff;
@@ -2133,18 +2136,14 @@
     }
 
     .report-modal {
-      width: min(760px, calc(100vw - 32px));
-      max-height: min(90vh, 900px);
+      width: min(760px, calc(100% - 32px));
+      max-height: min(90%, 900px);
       overflow: auto;
       padding: 22px;
       border-radius: 18px;
       background: #fff;
       box-shadow: 0 22px 70px rgba(17, 33, 59, .22);
-      transform: translateY(10px) scale(.985);
-      transition: transform .2s ease;
     }
-
-    .modal-backdrop.show .report-modal { transform: none; }
 
     .report-preview {
       margin-top: 16px;
@@ -2868,7 +2867,7 @@
 
       .report-modal {
         width: 100%;
-        max-height: calc(100vh - 24px);
+        max-height: calc(100% - 24px);
         padding: 16px;
         border-radius: 16px;
       }
@@ -2899,7 +2898,7 @@
       .location-modal {
         width: 100%;
         max-width: 100%;
-        max-height: calc(100vh - 24px);
+        max-height: calc(100% - 24px);
         overflow-y: auto;
         padding: 16px;
         border-radius: 16px;
@@ -3129,7 +3128,7 @@
     .agenda-observation-btn { margin-top:6px; border:0; background:transparent; color:#245a9e; padding:0; font-size:10px; font-weight:850; cursor:pointer; }
     .agenda-empty { padding:14px; border:1px dashed #d8e3f0; border-radius:10px; color:#74859d; font-size:11px; text-align:center; }
 
-    .agenda-modal { width:min(620px, calc(100vw - 32px)); max-height:min(780px, calc(100vh - 32px)); overflow:auto; }
+    .agenda-modal { width:min(620px, calc(100% - 32px)); max-height:min(780px, calc(100% - 32px)); overflow:auto; }
     .agenda-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     .agenda-form-grid .span-2 { grid-column:1 / -1; }
     .agenda-form-field label { display:block; margin-bottom:6px; color:#53657f; font-size:11px; font-weight:850; }
@@ -4204,7 +4203,20 @@
     let editingAgendaTripId = null;
     let absenceObservationContext = null;
     let isOnTripToday = false;
+    let scrollBeforeAdminMode = 0;
     const MAX_LOCATION_ACCURACY_METERS = 300;
+
+    function rememberPageScroll(modal) {
+      modal.dataset.pageScrollY = String(window.scrollY);
+    }
+
+    function restorePageScroll(modal) {
+      const savedScrollY = Number(modal.dataset.pageScrollY);
+      delete modal.dataset.pageScrollY;
+      if (!Number.isFinite(savedScrollY)) return;
+
+      requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
+    }
 
     function localDateISO(date = new Date()) {
       const y = date.getFullYear();
@@ -5902,6 +5914,7 @@
         showToast('Acesso administrativo não autorizado para este usuário.');
         return;
       }
+      scrollBeforeAdminMode = window.scrollY;
       document.body.classList.add('admin-mode');
       adminAccessBtn.setAttribute('aria-label', 'Menu do usuário');
       adminAccessBtn.setAttribute('title', 'Menu do usuário');
@@ -5916,7 +5929,7 @@
       adminAccessBtn.setAttribute('aria-label', 'Menu do usuário');
       adminAccessBtn.setAttribute('title', 'Menu do usuário');
       updateProfileAdminAction();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, scrollBeforeAdminMode);
     }
 
     function toggleAdminAccess() {
@@ -5927,16 +5940,19 @@
 
     function positionProfileDrawer() {
       const buttonRect = adminAccessBtn.getBoundingClientRect();
-      const menuWidth = Math.min(244, window.innerWidth - 24);
+      const viewport = window.visualViewport;
+      const viewportWidth = viewport?.width || window.innerWidth;
+      const viewportHeight = viewport?.height || window.innerHeight;
+      const menuWidth = Math.min(244, viewportWidth - 24);
       const gap = 10;
       const viewportPadding = 12;
 
       let left = buttonRect.right - menuWidth;
-      left = Math.max(viewportPadding, Math.min(left, window.innerWidth - menuWidth - viewportPadding));
+      left = Math.max(viewportPadding, Math.min(left, viewportWidth - menuWidth - viewportPadding));
 
       let top = buttonRect.bottom + gap;
-      const estimatedHeight = Math.min(profileDrawer.scrollHeight || 240, window.innerHeight - 24);
-      if (top + estimatedHeight > window.innerHeight - viewportPadding) {
+      const estimatedHeight = Math.min(profileDrawer.scrollHeight || 240, viewportHeight - 24);
+      if (top + estimatedHeight > viewportHeight - viewportPadding) {
         top = Math.max(viewportPadding, buttonRect.top - estimatedHeight - gap);
       }
 
@@ -5950,11 +5966,13 @@
         return;
       }
       updateProfileAdminAction();
-      positionProfileDrawer();
-      profileDrawer.classList.add('show');
-      profileDrawerBackdrop.classList.add('show');
-      profileDrawer.setAttribute('aria-hidden', 'false');
-      profileDrawerBackdrop.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => {
+        positionProfileDrawer();
+        profileDrawer.classList.add('show');
+        profileDrawerBackdrop.classList.add('show');
+        profileDrawer.setAttribute('aria-hidden', 'false');
+        profileDrawerBackdrop.setAttribute('aria-hidden', 'false');
+      });
     }
 
     function closeProfileDrawer() {
@@ -5995,6 +6013,7 @@
     }
 
     function openMyProfileModal() {
+      rememberPageScroll(myProfileModal);
       const profile = currentUserProfile || {};
       myProfileAvatar.textContent = profileInitials(profile.nome);
       myProfileName.value = profile.nome || '—';
@@ -6032,6 +6051,7 @@
       setMyProfileEditMode(false);
       myProfileModal.classList.remove('show');
       myProfileModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(myProfileModal);
     }
 
     function openMyProfileFromMenu() {
@@ -6087,6 +6107,7 @@
     }
 
     function openHoursModal() {
+      rememberPageScroll(hoursModal);
       // Horas trabalhadas pessoais, respeitando os resets individuais definidos acima.
       const ownRecords = personalPointRecords();
       const workedTotal = ownRecords.reduce((sum, r) => sum + workedMinutes(r), 0);
@@ -6100,6 +6121,7 @@
     function closeHoursModal() {
       hoursModal.classList.remove('show');
       hoursModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(hoursModal);
     }
 
     function renderPersonalHistory() {
@@ -6613,6 +6635,7 @@
 
     function openAdjustModal() {
       closeProfileDrawer();
+      rememberPageScroll(adjustModal);
       setAdjustView('home');
       adjustModal.classList.add('show');
       adjustModal.setAttribute('aria-hidden', 'false');
@@ -6621,6 +6644,7 @@
     function closeAdjustModal() {
       adjustModal.classList.remove('show');
       adjustModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(adjustModal);
     }
 
     function handleAdjustBack() {
@@ -6721,6 +6745,7 @@
 
     function openHistoryFromProfile() {
       closeProfileDrawer();
+      rememberPageScroll(historyModal);
       renderPersonalHistory();
       historyModal.classList.add('show');
       historyModal.setAttribute('aria-hidden', 'false');
@@ -6729,6 +6754,7 @@
     function closeHistoryModal() {
       historyModal.classList.remove('show');
       historyModal.setAttribute('aria-hidden', 'true');
+      restorePageScroll(historyModal);
     }
 
     function updateOtherActivityField() {
@@ -6744,6 +6770,9 @@
     adminAccessBtn.addEventListener('click', openProfileDrawer);
     logoutBtn.addEventListener('click', signOut);
     window.addEventListener('resize', () => {
+      if (profileDrawer.classList.contains('show')) positionProfileDrawer();
+    });
+    window.visualViewport?.addEventListener('resize', () => {
       if (profileDrawer.classList.contains('show')) positionProfileDrawer();
     });
 
