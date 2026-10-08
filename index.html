@@ -4686,13 +4686,47 @@
       return `${d}/${m}/${y}`;
     }
 
+    // Feriados nacionais com adicional de 100%. Feriados estaduais,
+    // municipais ou internos podem ser incluídos abaixo em YYYY-MM-DD.
+    const COMPANY_HOLIDAYS_100_PERCENT = new Set([
+      // '2026-03-19',
+    ]);
+
+    function isBrazilianNationalHoliday(iso) {
+      if (!iso) return false;
+      const [, month, day] = String(iso).split('-');
+      return new Set([
+        '01-01', '04-21', '05-01', '09-07', '10-12',
+        '11-02', '11-15', '11-20', '12-25'
+      ]).has(`${month}-${day}`);
+    }
+
+    function isHolidayDate(iso) {
+      return COMPANY_HOLIDAYS_100_PERCENT.has(String(iso)) || isBrazilianNationalHoliday(iso);
+    }
+
+    function overtimeRateForDate(iso) {
+      if (!iso) return null;
+      const [year, month, day] = String(iso).split('-').map(Number);
+      const dayOfWeek = new Date(year, month - 1, day).getDay();
+      if (isHolidayDate(iso) || dayOfWeek === 0) return 100;
+      if (dayOfWeek === 6) return 50;
+      return null;
+    }
+
+    function overtimeRateLabelForDate(iso) {
+      const rate = overtimeRateForDate(iso);
+      return rate === null ? null : `Hora extra ${rate}%`;
+    }
+
     function standardHoursForDate(iso) {
       if (!iso) return '07:30–17:20';
 
       const [y, m, d] = iso.split('-').map(Number);
       const dayOfWeek = new Date(y, m - 1, d).getDay();
 
-      if (dayOfWeek === 0 || dayOfWeek === 6) return 'Hora extra 100%';
+      const overtimeRateLabel = overtimeRateLabelForDate(iso);
+      if (overtimeRateLabel) return overtimeRateLabel;
       if (dayOfWeek === 5) return '07:30–17:10';
       return '07:30–17:20';
     }
@@ -4763,7 +4797,7 @@
       const [year, month, day] = String(iso).split('-').map(Number);
       const dayOfWeek = new Date(year, month - 1, day).getDay();
 
-      if (dayOfWeek === 0 || dayOfWeek === 6) return 0;
+      if (overtimeRateForDate(iso) !== null) return 0;
       if (dayOfWeek === 5) return 8 * 60 + 40;
       return 8 * 60 + 50;
     }
@@ -4785,8 +4819,9 @@
     }
 
     function overtimeRuleTextForDate(iso) {
-      if (isWeekendDate(iso)) {
-        return 'Fim de semana: todo o período trabalhado conta como hora extra 100%';
+      const overtimeRateLabel = overtimeRateLabelForDate(iso);
+      if (overtimeRateLabel) {
+        return `${overtimeRateLabel}: todo o período trabalhado conta como hora extra`;
       }
       return `Horas extras começam após ${formatDuration(workdayThresholdMinutesForDate(iso))} de trabalho`;
     }
@@ -5269,7 +5304,7 @@
           record,
           weekendBody,
           'Folgas trabalhadas',
-          'Hora extra 100%'
+          overtimeRateLabelForDate(record.date) || 'Hora extra'
         );
       }
 
@@ -5843,8 +5878,9 @@
         const extra = overtimeMinutes(activeForHint);
 
         if (extra > 0) {
-          hint.textContent = isWeekendDate(activeForHint.date)
-            ? `Hora extra 100% em andamento: ${formatDuration(extra)}`
+          const overtimeRateLabel = overtimeRateLabelForDate(activeForHint.date);
+          hint.textContent = overtimeRateLabel
+            ? `${overtimeRateLabel} em andamento: ${formatDuration(extra)}`
             : `Horas extras em andamento: ${formatDuration(extra)}`;
         } else {
           hint.textContent = overtimeRuleTextForDate(activeForHint.date);
