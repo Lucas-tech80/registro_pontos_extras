@@ -1904,6 +1904,21 @@
       display: none !important;
     }
 
+    .offline-notice {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 9px 16px;
+      background: #fff4d7;
+      border-bottom: 1px solid #f0c66b;
+      color: #7a4a00;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .offline-notice.show { display: block; }
+
     .topbar-actions {
       display: flex;
       align-items: center;
@@ -3245,6 +3260,7 @@
   </style>
 </head>
 <body>
+  <div class="offline-notice" id="offlineNotice" role="status">Sem conexão — registros serão sincronizados automaticamente.</div>
   <main class="app">
     <header class="topbar">
       <div class="brand-wrap">
@@ -4005,7 +4021,7 @@
   <div class="toast" id="toast"></div>
 
   <!-- Supabase JS: dados persistidos exclusivamente no PostgreSQL/Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     if (typeof window.Android !== 'undefined') {
@@ -4067,6 +4083,7 @@
     const weekendEmptyState = document.getElementById('weekendEmptyState');
     const toast = document.getElementById('toast');
     const dbStatus = document.getElementById('dbStatus');
+    const offlineNotice = document.getElementById('offlineNotice');
     const userSession = document.getElementById('userSession');
     const adminAccessBtn = document.getElementById('adminAccessBtn');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -4221,6 +4238,11 @@
     let isOnTripToday = false;
     let scrollBeforeAdminMode = 0;
     const MAX_LOCATION_ACCURACY_METERS = 300;
+    let offlineMode = false;
+
+    function offlineBridgeAvailable() {
+      return Boolean(window.AndroidOffline && typeof window.AndroidOffline.bootstrap === 'function');
+    }
 
     function rememberPageScroll(modal) {
       modal.dataset.pageScrollY = String(window.scrollY);
@@ -4495,9 +4517,28 @@
       await loadRecordsFromSupabase();
       await loadApprovedAdjustRecords();
       render();
+      cacheOfflineState();
       await loadMyAgendaToday();
       if (document.body.classList.contains('admin-mode') && currentUserProfile?.nivel_acesso === 'ADMIN') {
         try { await loadAgendaAdmin(); } catch (error) { console.warn('Falha ao atualizar agenda administrativa.', error); }
+      }
+    }
+
+    function cacheOfflineState() {
+      if (!offlineBridgeAvailable() || !currentUserProfile) return;
+      try {
+        window.AndroidOffline.cacheSnapshot(
+          JSON.stringify(currentUserProfile),
+          JSON.stringify(records || []),
+          new Date().toISOString()
+        );
+        if (supabaseClient) {
+          supabaseClient.auth.getSession().then(({ data }) => {
+            if (data?.session) window.AndroidOffline.cacheSession(JSON.stringify(data.session));
+          }).catch(() => {});
+        }
+      } catch (error) {
+        console.warn('Não foi possível atualizar o cache offline.', error);
       }
     }
 
@@ -4538,6 +4579,7 @@
       registerBtn.disabled = false;
       logoutBtn.hidden = true;
       await refreshFromSupabase();
+      cacheOfflineState();
       setDbStatus('ok', 'Supabase: autenticado');
       hideAuthModal();
     }
@@ -4599,8 +4641,30 @@
     }
 
     async function initializeSupabase() {
+      if (!navigator.onLine && offlineBridgeAvailable()) {
+        const snapshot = JSON.parse(window.AndroidOffline.bootstrap());
+        if (snapshot.available) {
+          offlineMode = true;
+          currentUserProfile = snapshot.profile;
+          currentAuthUser = { id: snapshot.profile.id };
+          records = Array.isArray(snapshot.records) ? snapshot.records : [];
+          setEmployeeIdentity(snapshot.profile);
+          registerBtn.disabled = false;
+          offlineNotice.classList.add('show');
+          setDbStatus('error', `Modo offline — ${snapshot.pendingCount || 0} registro(s) aguardando sincronização`);
+          render();
+          return;
+        }
+      }
       if (window.location.protocol === 'file:') {
         console.warn('Este HTML está aberto via file://. Use http://localhost para geolocalização e comportamento consistente do navegador.');
+      }
+
+      if (!window.supabase && navigator.onLine) {
+        const deadline = Date.now() + 8000;
+        while (!window.supabase && Date.now() < deadline && navigator.onLine) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
       }
 
       document.getElementById('skeleton').hidden = true;
@@ -5685,7 +5749,7 @@
       }
     }
     async function startRecord() {
-      if (!dbReady) return showToast('Supabase não está conectado.');
+      if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
       if (!collaborator) return showToast('Selecione o colaborador.');
@@ -5714,6 +5778,21 @@
 
       const currentLocation = await getLocationForPunch();
       if (!currentLocation) return;
+
+      if (offlineMode) {
+        const id = crypto.randomUUID();
+        const occurredAt = new Date().toISOString();
+        const shiftId = crypto.randomUUID();
+        window.AndroidOffline.enqueuePointAction(JSON.stringify({
+          id, type: 'INICIO', userId: collaborator.id, shiftId,
+          occurredAt, createdAt: occurredAt,
+          payload: { p_atividade_tipo: activity.value, p_atividade_detalhe: activity.value === 'Outros' ? otherActivityText : null, p_latitude: currentLocation.lat, p_longitude: currentLocation.lng, p_precisao_metros: currentLocation.accuracy || null, p_occurred_at: occurredAt, p_localizacao_capturada_at: currentLocation.capturedAt || occurredAt, p_client_event_id: id, p_user_agent: navigator.userAgent }
+        }));
+        records.push({ id: `offline-${shiftId}`, collaboratorId: collaborator.id, date: selectedDate, start: nowTime(), end: null, forcedStatus: 'progress', localShiftId: shiftId, localStartActionId: id, name: collaborator.nome, activity: activity.value });
+        render();
+        showToast('Ponto salvo no aparelho. Aguardando sincronização.');
+        return;
+      }
 
       registerBtn.disabled = true;
       const originalText = registerBtn.textContent;
@@ -5751,7 +5830,7 @@
       }
     }
     async function finishRecord() {
-      if (!dbReady) return showToast('Supabase não está conectado.');
+      if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
       if (!collaborator) return showToast('Selecione o colaborador.');
@@ -5768,6 +5847,19 @@
 
       const currentLocation = await getLocationForPunch();
       if (!currentLocation) return;
+
+      if (offlineMode) {
+        const id = crypto.randomUUID();
+        const occurredAt = new Date().toISOString();
+        const shiftId = record.localShiftId || record.id;
+        window.AndroidOffline.enqueuePointAction(JSON.stringify({
+          id, type: 'FIM', userId: collaborator.id, shiftId, dependencyId: record.localStartActionId || '', occurredAt, createdAt: occurredAt,
+          payload: { p_client_event_id: id, p_client_shift_id: record.localShiftId || null, p_sessao_id: record.localShiftId ? null : record.id, p_occurred_at: occurredAt, p_localizacao_capturada_at: currentLocation.capturedAt || occurredAt, p_latitude: currentLocation.lat, p_longitude: currentLocation.lng, p_precisao_metros: currentLocation.accuracy || null, p_user_agent: navigator.userAgent }
+        }));
+        record.end = nowTime(); record.forcedStatus = null; render();
+        showToast('Fim salvo no aparelho. Aguardando sincronização.');
+        return;
+      }
 
       registerBtn.disabled = true;
       const originalText = registerBtn.textContent;
