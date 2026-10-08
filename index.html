@@ -5180,32 +5180,10 @@
     }
 
     function isAdminRecordHidden(record) {
-      // Regra exclusiva da Área administrativa:
-      // oculta TODOS os registros de Lucas Gabriel e Bárbara Vieira somente desta listagem.
-      // Os dados originais no Supabase e as áreas pessoais permanecem intactos.
-      const name = String(record?.name || '').trim().toUpperCase();
-      const normalizedName = name
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-
-      if (
-        record?.recordSource !== 'adjustment' &&
-        (normalizedName === 'LUCAS GABRIEL' || normalizedName === 'BARBARA VIEIRA')
-      ) {
-        return true;
-      }
-
-      // Mantém ocultações administrativas específicas já existentes para outros registros.
-      const hidden = [
-        ['JEFFERSON RAMIRES', '2026-09-30', '10:26', ''],
-        ['JEFFERSON RAMIRES', '2026-09-24', '11:04', '09:39']
-      ];
-
-      const date = String(record?.date || '').trim();
-      const start = String(record?.start || '').trim();
-      const end = String(record?.end || '').trim();
-
-      return hidden.some(([n, d, s, e]) => name === n && date === d && start === s && end === e);
+      // Nenhum registro pode ser ocultado no cliente. A área administrativa
+      // deve refletir integralmente o que está no Supabase; exclusões são
+      // operações explícitas e auditáveis no banco.
+      return false;
     }
 
     function appendAdminRecordRow(record, targetBody, scheduleLabel, scheduleValue) {
@@ -5686,7 +5664,14 @@
 
       const selectedDate = localDateISO();
       recordDate.value = selectedDate;
-      const active = records.find(r => r.collaboratorId === collaborator.id && r.start && !r.end && r.forcedStatus === 'progress');
+      // Só um ponto do dia corrente impede um novo início. Um ponto aberto de
+      // dia anterior expirou à meia-noite e não pode bloquear o dia de hoje.
+      const active = records.find(r =>
+        r.collaboratorId === collaborator.id &&
+        r.date === selectedDate &&
+        r.start && !r.end &&
+        r.forcedStatus === 'progress'
+      );
       if (active) return showToast('Já existe um registro em andamento para este colaborador.');
 
       const completed = records.find(r => r.collaboratorId === collaborator.id && r.date === selectedDate && r.start && r.end);
@@ -5738,15 +5723,13 @@
 
       const selectedDate = localDateISO();
       recordDate.value = selectedDate;
-      let record = records.find(r => r.collaboratorId === collaborator.id && r.date === selectedDate && r.start && !r.end && r.forcedStatus === 'progress');
+      const record = records.find(r =>
+        r.collaboratorId === collaborator.id &&
+        r.date === selectedDate &&
+        r.start && !r.end && r.forcedStatus === 'progress'
+      );
 
-      if (!record) {
-        record = records
-          .filter(r => r.collaboratorId === collaborator.id && r.start && !r.end && r.forcedStatus === 'progress')
-          .sort((a, b) => b.date.localeCompare(a.date))[0] || null;
-      }
-
-      if (!record) return showToast('Nenhum registro em andamento encontrado para este colaborador.');
+      if (!record) return showToast('Nenhum ponto em andamento foi encontrado para hoje. Pontos de dias anteriores expiraram à meia-noite.');
 
       const currentLocation = await getLocationForPunch();
       if (!currentLocation) return;
@@ -5805,9 +5788,15 @@
         r.forcedStatus === 'progress'
       );
 
-      if (active || previousOpen) {
+      if (active) {
         await finishRecord();
         return;
+      }
+
+      if (previousOpen) {
+        // Nunca encaminhar uma batida atual para o registro de outro dia.
+        // O próximo toque abre uma nova jornada com a data de hoje.
+        showToast(`O ponto de ${formatDateBR(previousOpen.date)} expirou à meia-noite e não pode receber uma batida de fim. Abrindo um novo registro para hoje.`);
       }
 
       const completed = records.find(r =>
@@ -5839,12 +5828,10 @@
       // Para Lucas Gabriel, o indicador de jornada também respeita o reset.
       // Registros anteriores ao marco do reset não podem mais gerar
       // "Jornada em andamento" ou "Jornada finalizada" no painel pessoal.
-      const statusRecords = isLucasGabrielProfile()
-        ? currentUserRecords.filter(r => recordTimestamp(r) > LUCAS_GABRIEL_DATA_RESET_AT)
-        : currentUserRecords;
+      const statusRecords = currentUserRecords;
 
       const activeForHint = statusRecords
-        .filter(r => r.start && !r.end && r.forcedStatus === 'progress')
+        .filter(r => r.date === today && r.start && !r.end && r.forcedStatus === 'progress')
         .sort((a, b) => b.date.localeCompare(a.date))[0];
 
       const latestToday = statusRecords
@@ -6075,51 +6062,12 @@
       openMyProfileModal();
     }
 
-    const LUCAS_GABRIEL_DATA_RESET_AT = Date.parse('2026-10-05T13:13:00Z');
-
-    function normalizedCurrentProfileName() {
-      return String(currentUserProfile?.nome || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .trim()
-        .toUpperCase();
-    }
-
-    function isBarbaraOrJeffersonProfile() {
-      const nome = normalizedCurrentProfileName();
-      return nome === 'BARBARA VIEIRA' || nome === 'JEFFERSON RAMIRES';
-    }
-
-    function isLucasGabrielProfile() {
-      return normalizedCurrentProfileName() === 'LUCAS GABRIEL';
-    }
-
-    function recordTimestamp(record) {
-      if (record?.startAt) {
-        const value = Date.parse(record.startAt);
-        if (!Number.isNaN(value)) return value;
-      }
-      if (record?.date && record?.start) {
-        const value = Date.parse(`${record.date}T${record.start}:00-03:00`);
-        if (!Number.isNaN(value)) return value;
-      }
-      return 0;
-    }
-
     function personalPointRecords() {
       if (!currentUserProfile) return [];
 
-      const ownRecords = records.filter(r => !r.collaboratorId || r.collaboratorId === currentUserProfile.id);
-
-      // Mantém a regra anterior de Bárbara e Jefferson nas duas abas pessoais.
-      if (isBarbaraOrJeffersonProfile()) return [];
-
-      // Lucas Gabriel foi zerado neste momento. Registros posteriores ao reset voltam a aparecer normalmente.
-      if (isLucasGabrielProfile()) {
-        return ownRecords.filter(r => recordTimestamp(r) > LUCAS_GABRIEL_DATA_RESET_AT);
-      }
-
-      return ownRecords;
+      // Todo colaborador vê todos os seus próprios registros retornados pela
+      // API, sem exceções por nome ou cortes arbitrários de data.
+      return records.filter(r => !r.collaboratorId || r.collaboratorId === currentUserProfile.id);
     }
 
     function openHoursModal() {
@@ -6515,12 +6463,7 @@
         const { data, error } = await db().rpc('listar_minhas_solicitacoes_ajuste');
         if (error) throw error;
         const rawItems = Array.isArray(data) ? data : [];
-        const profileItems = isLucasGabrielProfile()
-          ? rawItems.filter(item => {
-              const createdAt = Date.parse(item?.created_at || '');
-              return !Number.isNaN(createdAt) && createdAt > LUCAS_GABRIEL_DATA_RESET_AT;
-            })
-          : rawItems;
+        const profileItems = rawItems;
 
         const items = profileItems.filter(item =>
           String(item?.status || 'PENDENTE').toUpperCase() !== 'APROVADO'
