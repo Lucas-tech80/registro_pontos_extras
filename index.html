@@ -5910,7 +5910,10 @@
       }
     }
     async function registerPoint() {
-      if (!dbReady) return showToast('Supabase não está conectado.');
+      // O clique principal passa por aqui antes de startRecord/finishRecord.
+      // Ativar o modo offline neste ponto evita bloquear uma sessão já armazenada.
+      if (!offlineMode) activateOfflineMode();
+      if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
       if (!collaborator) return showToast('Selecione o colaborador.');
