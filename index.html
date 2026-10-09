@@ -4218,6 +4218,7 @@
 
     let records = [];
     let approvedAdjustRecords = [];
+    let personalApprovedAdjustRecords = [];
     let collaborators = [];
     let currentUserProfile = null;
     let currentAuthUser = null;
@@ -4487,6 +4488,55 @@
       return category ? `Outros — ${category}` : 'Outros ajustes';
     }
 
+    function approvedAdjustmentToPointRecord(row, collaboratorId, fallbackName) {
+      const start = row.inicio ? String(row.inicio).slice(0, 5) : null;
+      const end = row.fim ? String(row.fim).slice(0, 5) : null;
+      const date = String(row.data || '').slice(0, 10);
+
+      return {
+        id: `ajuste-${row.id}`,
+        adjustmentId: row.id,
+        recordSource: 'adjustment',
+        collaboratorId: collaboratorId || null,
+        name: row.solicitante_nome || fallbackName || 'Colaborador',
+        activity: approvedAdjustmentActivityLabel(row),
+        activityType: 'Ajuste aprovado',
+        activityDetail: row.motivo_categoria || '',
+        date,
+        start,
+        end,
+        startAt: date && start ? `${date}T${start}:00-03:00` : null,
+        endAt: date && end ? `${date}T${end}:00-03:00` : null,
+        endDate: date || null,
+        approved: true,
+        forcedStatus: null,
+        observation: row.motivo_descricao || '',
+        startLocation: null,
+        endLocation: null,
+        dbStatus: 'APROVADO',
+        minutesWorkedDb: null,
+        overtimeMinutesDb: null
+      };
+    }
+
+    async function loadPersonalApprovedAdjustRecords() {
+      personalApprovedAdjustRecords = [];
+      if (!dbReady || !currentUserProfile) return;
+
+      try {
+        const { data, error } = await db().rpc('listar_minhas_solicitacoes_ajuste');
+        if (error) throw error;
+
+        const rows = Array.isArray(data) ? data : [];
+        personalApprovedAdjustRecords = rows
+          .filter(row => String(row?.status || '').toUpperCase() === 'APROVADO')
+          .map(row => approvedAdjustmentToPointRecord(row, currentUserProfile.id, currentUserProfile.nome));
+      } catch (error) {
+        personalApprovedAdjustRecords = [];
+        console.warn('Falha ao carregar ajustes aprovados do próprio colaborador.', error);
+      }
+    }
+
     async function loadApprovedAdjustRecords() {
       approvedAdjustRecords = [];
 
@@ -4498,36 +4548,9 @@
 
         const rows = Array.isArray(data) ? data : [];
 
-        approvedAdjustRecords = rows.map(row => {
-          const start = row.inicio ? String(row.inicio).slice(0, 5) : null;
-          const end = row.fim ? String(row.fim).slice(0, 5) : null;
-          const date = String(row.data || '').slice(0, 10);
-
-          return {
-            id: `ajuste-${row.id}`,
-            adjustmentId: row.id,
-            recordSource: 'adjustment',
-            collaboratorId: row.colaborador_id || null,
-            name: row.solicitante_nome || 'Colaborador',
-            activity: approvedAdjustmentActivityLabel(row),
-            activityType: 'Ajuste aprovado',
-            activityDetail: row.motivo_categoria || '',
-            date,
-            start,
-            end,
-            startAt: date && start ? `${date}T${start}:00-03:00` : null,
-            endAt: date && end ? `${date}T${end}:00-03:00` : null,
-            endDate: date || null,
-            approved: true,
-            forcedStatus: null,
-            observation: row.motivo_descricao || '',
-            startLocation: null,
-            endLocation: null,
-            dbStatus: 'APROVADO',
-            minutesWorkedDb: null,
-            overtimeMinutesDb: null
-          };
-        });
+        approvedAdjustRecords = rows.map(row =>
+          approvedAdjustmentToPointRecord(row, row.colaborador_id, row.solicitante_nome)
+        );
       } catch (error) {
         approvedAdjustRecords = [];
         console.warn('Falha ao carregar solicitações aprovadas na área administrativa.', error);
@@ -4552,6 +4575,7 @@
     async function refreshFromSupabase() {
       if (!dbReady || !currentUserProfile) return;
       await loadRecordsFromSupabase();
+      await loadPersonalApprovedAdjustRecords();
       await loadApprovedAdjustRecords();
       render();
       cacheOfflineState();
@@ -4665,6 +4689,7 @@
       currentAuthUser = null;
       currentUserProfile = null;
       records = [];
+      personalApprovedAdjustRecords = [];
       collaborators = [];
       document.body.classList.remove('admin-mode');
       setEmployeeIdentity(null);
@@ -6232,7 +6257,8 @@
 
       // Todo colaborador vê todos os seus próprios registros retornados pela
       // API, sem exceções por nome ou cortes arbitrários de data.
-      return records.filter(r => !r.collaboratorId || r.collaboratorId === currentUserProfile.id);
+      return [...records, ...personalApprovedAdjustRecords]
+        .filter(r => !r.collaboratorId || r.collaboratorId === currentUserProfile.id);
     }
 
     function openHoursModal() {
