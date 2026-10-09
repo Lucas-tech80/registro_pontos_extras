@@ -4244,6 +4244,34 @@
       return Boolean(window.AndroidOffline && typeof window.AndroidOffline.bootstrap === 'function');
     }
 
+    function deviceIsOffline() {
+      if (offlineBridgeAvailable() && typeof window.AndroidOffline.isNetworkAvailable === 'function') {
+        try { return !window.AndroidOffline.isNetworkAvailable(); } catch (_) {}
+      }
+      return !navigator.onLine;
+    }
+
+    function activateOfflineMode() {
+      if (!deviceIsOffline() || !offlineBridgeAvailable()) return false;
+      try {
+        const snapshot = JSON.parse(window.AndroidOffline.bootstrap());
+        if (!snapshot.available || !snapshot.profile) return false;
+        offlineMode = true;
+        currentUserProfile = snapshot.profile;
+        currentAuthUser = { id: snapshot.profile.id };
+        records = Array.isArray(snapshot.records) ? snapshot.records : [];
+        setEmployeeIdentity(snapshot.profile);
+        registerBtn.disabled = false;
+        offlineNotice.classList.add('show');
+        setDbStatus('error', `Modo offline — ${snapshot.pendingCount || 0} registro(s) aguardando sincronização`);
+        render();
+        return true;
+      } catch (error) {
+        console.warn('Não foi possível abrir o modo offline.', error);
+        return false;
+      }
+    }
+
     function rememberPageScroll(modal) {
       modal.dataset.pageScrollY = String(window.scrollY);
     }
@@ -4641,21 +4669,7 @@
     }
 
     async function initializeSupabase() {
-      if (!navigator.onLine && offlineBridgeAvailable()) {
-        const snapshot = JSON.parse(window.AndroidOffline.bootstrap());
-        if (snapshot.available) {
-          offlineMode = true;
-          currentUserProfile = snapshot.profile;
-          currentAuthUser = { id: snapshot.profile.id };
-          records = Array.isArray(snapshot.records) ? snapshot.records : [];
-          setEmployeeIdentity(snapshot.profile);
-          registerBtn.disabled = false;
-          offlineNotice.classList.add('show');
-          setDbStatus('error', `Modo offline — ${snapshot.pendingCount || 0} registro(s) aguardando sincronização`);
-          render();
-          return;
-        }
-      }
+      if (activateOfflineMode()) return;
       if (window.location.protocol === 'file:') {
         console.warn('Este HTML está aberto via file://. Use http://localhost para geolocalização e comportamento consistente do navegador.');
       }
@@ -5749,6 +5763,7 @@
       }
     }
     async function startRecord() {
+      if (!offlineMode) activateOfflineMode();
       if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
@@ -5830,6 +5845,7 @@
       }
     }
     async function finishRecord() {
+      if (!offlineMode) activateOfflineMode();
       if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
