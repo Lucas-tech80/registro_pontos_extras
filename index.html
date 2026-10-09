@@ -4923,7 +4923,13 @@
 
     function overtimeMinutes(record) {
       const worked = workedMinutes(record);
-      return Math.max(0, worked - workdayThresholdMinutesForDate(record?.date));
+      const rawExtraMinutes = Math.max(0, worked - workdayThresholdMinutesForDate(record?.date));
+
+      // Sábado é remunerado a 50%: cada duas horas extras trabalhadas
+      // representam uma hora extra no saldo. Domingo e feriados seguem 100%.
+      return overtimeRateForDate(record?.date) === 50
+        ? Math.round(rawExtraMinutes / 2)
+        : rawExtraMinutes;
     }
 
     function overtimeDisplayMarkup(record) {
