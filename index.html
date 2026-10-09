@@ -4272,6 +4272,15 @@
       }
     }
 
+    // A decisão do ponto precisa acontecer antes de qualquer uso do Supabase.
+    // A bridge lê o perfil e a fila do SQLite nativo, portanto não depende do
+    // localStorage do WebView nem de uma sessão de rede ativa.
+    function prepareOfflinePunchMode() {
+      if (!deviceIsOffline()) return false;
+      if (!offlineMode) activateOfflineMode();
+      return offlineMode && offlineBridgeAvailable() && Boolean(currentUserProfile?.id);
+    }
+
     function rememberPageScroll(modal) {
       modal.dataset.pageScrollY = String(window.scrollY);
     }
@@ -5763,8 +5772,11 @@
       }
     }
     async function startRecord() {
-      if (!offlineMode) activateOfflineMode();
-      if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
+      const saveOffline = prepareOfflinePunchMode();
+      if (deviceIsOffline() && !saveOffline) {
+        return showToast('Modo offline indisponível neste aparelho. Conecte-se uma vez, entre no app e aguarde a tela principal carregar.');
+      }
+      if (!saveOffline && !dbReady) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
       if (!collaborator) return showToast('Selecione o colaborador.');
@@ -5794,7 +5806,7 @@
       const currentLocation = await getLocationForPunch();
       if (!currentLocation) return;
 
-      if (offlineMode) {
+      if (saveOffline) {
         const id = crypto.randomUUID();
         const occurredAt = new Date().toISOString();
         const shiftId = crypto.randomUUID();
@@ -5845,8 +5857,11 @@
       }
     }
     async function finishRecord() {
-      if (!offlineMode) activateOfflineMode();
-      if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
+      const saveOffline = prepareOfflinePunchMode();
+      if (deviceIsOffline() && !saveOffline) {
+        return showToast('Modo offline indisponível neste aparelho. Conecte-se uma vez, entre no app e aguarde a tela principal carregar.');
+      }
+      if (!saveOffline && !dbReady) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
       if (!collaborator) return showToast('Selecione o colaborador.');
@@ -5864,7 +5879,7 @@
       const currentLocation = await getLocationForPunch();
       if (!currentLocation) return;
 
-      if (offlineMode) {
+      if (saveOffline) {
         const id = crypto.randomUUID();
         const occurredAt = new Date().toISOString();
         const shiftId = record.localShiftId || record.id;
@@ -5910,10 +5925,13 @@
       }
     }
     async function registerPoint() {
-      // O clique principal passa por aqui antes de startRecord/finishRecord.
-      // Ativar o modo offline neste ponto evita bloquear uma sessão já armazenada.
-      if (!offlineMode) activateOfflineMode();
-      if (!dbReady && !offlineMode) return showToast('Supabase não está conectado.');
+      // Nunca consultar o Supabase para decidir a batida offline. Sem internet,
+      // o SQLite é a fonte do perfil e startRecord/finishRecord enfileiram a ação.
+      const saveOffline = prepareOfflinePunchMode();
+      if (deviceIsOffline() && !saveOffline) {
+        return showToast('Modo offline indisponível neste aparelho. Conecte-se uma vez, entre no app e aguarde a tela principal carregar.');
+      }
+      if (!saveOffline && !dbReady) return showToast('Supabase não está conectado.');
 
       const collaborator = selectedCollaborator();
       if (!collaborator) return showToast('Selecione o colaborador.');
